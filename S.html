@@ -1,8 +1,7 @@
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOTHING X HUB</title>
+    <title>S</title>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/170884425?s=400&u=3eedec18a968ae399b77b9e7e577ce4703676414&v=4" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.fluenticon.com/icon.min.css">
@@ -161,17 +160,23 @@
             position: relative;
             z-index: 1;
             outline: none;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .add-tab:hover {
             background-color: #1a1a1a;
             border: 1px solid #cccccc;
+            transform: scale(1.1) rotate(90deg);
         }
 
-        .add-tab i {
-            font-size: 16px;
-            line-height: 24px;
+        .add-tab svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         #editor-container {
@@ -214,8 +219,8 @@
         }
 
         .execute-btn, .clear-btn {
-            background: linear-gradient(145deg, #ffffff, #e0e0e0);
-            color: #000000;
+            background: #000000;
+            color: #ffffff;
             border: none;
             padding: 8px;
             cursor: pointer;
@@ -232,17 +237,18 @@
         }
 
         .execute-btn:hover, .clear-btn:hover {
-            background: linear-gradient(145deg, #e0e0e0, #ffffff);
+            background: #1a1a1a;
             transform: scale(1.1);
         }
 
         .execute-btn:active, .clear-btn:active {
-            background: linear-gradient(145deg, #d0d0d0, #e0e0e0);
+            background: #2a2a2a;
             transform: scale(0.95);
         }
 
         .execute-btn i, .clear-btn i {
             font-size: 14px;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -386,7 +392,11 @@
 
             const addTabBtn = document.createElement('div');
             addTabBtn.className = 'add-tab';
-            addTabBtn.innerHTML = '<i class="vr-ic_fluent_add_24_regular"></i>';
+            addTabBtn.innerHTML = `
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 5v14m-7-7h14"/>
+                </svg>
+            `;
             addTabBtn.onclick = () => createTab();
             tabHeader.appendChild(addTabBtn);
 

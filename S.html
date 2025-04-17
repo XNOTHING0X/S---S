@@ -581,10 +581,12 @@ function executeScript() {
     .then(data => {
         console.log(data);
         showNotification('Script Executed Successfully', 'success');
+      document.getElementById('context-menu').style.display = 'none';
     })
     .catch(error => {
         console.error('Error:', error);
         showNotification('Error Executing Script', 'error');
+      document.getElementById('context-menu').style.display = 'none';
     });
 }
 
@@ -596,6 +598,7 @@ function clearText() {
         if (tabData) tabData.content = '';
         localStorage.setItem('savedTabs', JSON.stringify(tabs));
         showNotification('Text Cleared', 'success');
+      document.getElementById('context-menu').style.display = 'none';
     }
 }
 function attachExecutor() {
@@ -605,10 +608,12 @@ function attachExecutor() {
     .then(response => response.json())
     .then(data => {
         showNotification('Attached successfully!', 'success');
+      document.getElementById('context-menu').style.display = 'none';
     })
     .catch(error => {
         showNotification('Failed to attach.', 'error');
         console.error('Attach error:', error);
+      document.getElementById('context-menu').style.display = 'none';
     });
 }
     </script>

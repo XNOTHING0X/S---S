@@ -1,10 +1,9 @@
 
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/S-S.ico" type="image/x-icon">
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/170884425?s=400&u=3eedec18a968ae399b77b9e7e577ce4703676414&v=4" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.fluenticon.com/icon.min.css">
     <style>
@@ -130,7 +129,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transform: translateY(10px);
             display: none;
-            max-width: 200px;
+            max-width: 200px; /* Limit width */
         }
 
         #notification.show {
@@ -236,7 +235,6 @@
     <div id="context-menu" style="display: none;">
         <div class="context-menu-item" onclick="executeScript()">Execute</div>
         <div class="context-menu-item" onclick="clearText()">Clear</div>
-        <div class="context-menu-item" onclick="attachScript()">Attach</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
@@ -488,7 +486,28 @@
                     automaticLayout: true,
                     fontSize: 14,
                     lineNumbers: 'on',
-                    contextmenu: false // Disable default context menu
+                    contextmenu: true
+                });
+
+                // Add custom context menu entries
+                editor.addAction({
+                    id: 'execute-script',
+                    label: 'Execute',
+                    contextMenuGroupId: 'navigation',
+                    contextMenuOrder: 1.5,
+                    run: function(ed) {
+                        executeScript();
+                    }
+                });
+
+                editor.addAction({
+                    id: 'clear-text',
+                    label: 'Clear',
+                    contextMenuGroupId: 'navigation',
+                    contextMenuOrder: 1.6,
+                    run: function(ed) {
+                        clearText();
+                    }
                 });
 
                 editor.onDidChangeModelContent(() => {
@@ -519,30 +538,15 @@
                 }
 
                 resizeEditor();
-
-                // Add right-click event listener to show custom context menu
-                const editorContainer = document.getElementById('monaco-editor');
-                const contextMenu = document.getElementById('context-menu');
-
-                editorContainer.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    contextMenu.style.display = 'block';
-                    contextMenu.style.left = `${e.clientX}px`;
-                    contextMenu.style.top = `${e.clientY}px`;
-                });
-
-                // Hide context menu when clicking elsewhere
-                document.addEventListener('click', (e) => {
-                    if (!contextMenu.contains(e.target)) {
-                        contextMenu.style.display = 'none';
-                    }
-                });
-
             } catch (error) {
                 console.error('Error initializing editor:', error);
                 showNotification('Failed to initialize editor', 'error');
             }
         });
+
+        // Remove the custom context menu since we're using Monaco's built-in menu
+        const contextMenu = document.getElementById('context-menu');
+        contextMenu.style.display = 'none';
 
         let notificationTimeout = null;
 
@@ -565,57 +569,39 @@
                 setTimeout(() => {
                     notification.style.display = 'none';
                 }, 200);
-            }, 2000);
+            }, 2000); // Reduced to 2 seconds
         }
 
-function executeScript() {
-    const script = editor.getValue();
-    fetch('/execute', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'script=' + encodeURIComponent(script)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        showNotification('Script Executed Successfully', 'success');
-      document.getElementById('context-menu').style.display = 'none';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error Executing Script', 'error');
-      document.getElementById('context-menu').style.display = 'none';
-    });
-}
+        function executeScript() {
+            if (!editor) return;
+            const script = editor.getValue();
+            fetch('/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'script=' + encodeURIComponent(script)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                showNotification('Script Executed Successfully', 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error Executing Script', 'error');
+            });
+        }
 
-// Updated clearText function with success notification
-function clearText() {
-    if (activeTabId && editor) {
-        editor.setValue('');
-        const tabData = tabs.find(t => t.id === activeTabId);
-        if (tabData) tabData.content = '';
-        localStorage.setItem('savedTabs', JSON.stringify(tabs));
-        showNotification('Text Cleared', 'success');
-      document.getElementById('context-menu').style.display = 'none';
-    }
-}
-function attachExecutor() {
-    fetch('/attachHUB', {
-        method: 'POST' // ← to MUSI być POST
-    })
-    .then(response => response.json())
-    .then(data => {
-        showNotification('Attached successfully!', 'success');
-      document.getElementById('context-menu').style.display = 'none';
-    })
-    .catch(error => {
-        showNotification('Failed to attach.', 'error');
-        console.error('Attach error:', error);
-      document.getElementById('context-menu').style.display = 'none';
-    });
-}
+        function clearText() {
+            if (activeTabId && editor) {
+                editor.setValue('');
+                const tabData = tabs.find(t => t.id === activeTabId);
+                if (tabData) tabData.content = '';
+                saveTabs();
+                showNotification('Text Cleared', 'success');
+            }
+        }
     </script>
 </body>
 </html>

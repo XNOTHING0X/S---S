@@ -1,4 +1,5 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -129,7 +130,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transform: translateY(10px);
             display: none;
-            max-width: 200px; /* Limit width */
+            max-width: 200px;
         }
 
         #notification.show {
@@ -486,28 +487,7 @@
                     automaticLayout: true,
                     fontSize: 14,
                     lineNumbers: 'on',
-                    contextmenu: true
-                });
-
-                // Add custom context menu entries
-                editor.addAction({
-                    id: 'execute-script',
-                    label: 'Execute',
-                    contextMenuGroupId: 'navigation',
-                    contextMenuOrder: 1.5,
-                    run: function(ed) {
-                        executeScript();
-                    }
-                });
-
-                editor.addAction({
-                    id: 'clear-text',
-                    label: 'Clear',
-                    contextMenuGroupId: 'navigation',
-                    contextMenuOrder: 1.6,
-                    run: function(ed) {
-                        clearText();
-                    }
+                    contextmenu: false // Disable default context menu
                 });
 
                 editor.onDidChangeModelContent(() => {
@@ -538,15 +518,30 @@
                 }
 
                 resizeEditor();
+
+                // Add right-click event listener to show custom context menu
+                const editorContainer = document.getElementById('monaco-editor');
+                const contextMenu = document.getElementById('context-menu');
+
+                editorContainer.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    contextMenu.style.display = 'block';
+                    contextMenu.style.left = `${e.clientX}px`;
+                    contextMenu.style.top = `${e.clientY}px`;
+                });
+
+                // Hide context menu when clicking elsewhere
+                document.addEventListener('click', (e) => {
+                    if (!contextMenu.contains(e.target)) {
+                        contextMenu.style.display = 'none';
+                    }
+                });
+
             } catch (error) {
                 console.error('Error initializing editor:', error);
                 showNotification('Failed to initialize editor', 'error');
             }
         });
-
-        // Remove the custom context menu since we're using Monaco's built-in menu
-        const contextMenu = document.getElementById('context-menu');
-        contextMenu.style.display = 'none';
 
         let notificationTimeout = null;
 
@@ -569,7 +564,7 @@
                 setTimeout(() => {
                     notification.style.display = 'none';
                 }, 200);
-            }, 2000); // Reduced to 2 seconds
+            }, 2000);
         }
 
         function executeScript() {
@@ -586,10 +581,12 @@
             .then(data => {
                 console.log(data);
                 showNotification('Script Executed Successfully', 'success');
+                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
             })
             .catch(error => {
                 console.error('Error:', error);
                 showNotification('Error Executing Script', 'error');
+                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
             });
         }
 
@@ -600,6 +597,7 @@
                 if (tabData) tabData.content = '';
                 saveTabs();
                 showNotification('Text Cleared', 'success');
+                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
             }
         }
     </script>

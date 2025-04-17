@@ -1,3 +1,4 @@
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,11 +43,15 @@
             border-bottom: 1px solid #ffffff;
             overflow-x: auto;
             white-space: nowrap;
+            scrollbar-width: none;
+        }
+
+        .tab-header::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
             display: flex;
-            justify-content: center;
             align-items: center;
             padding: 2px 10px;
             margin: 0 5px;
@@ -57,6 +62,7 @@
             font-size: 12px;
             height: 24px;
             transition: background-color 0.3s ease;
+            position: relative;
         }
 
         .tab:hover {
@@ -75,24 +81,55 @@
             display: inline-block;
             white-space: nowrap;
             text-align: center;
+            padding-right: 20px;
+        }
+
+        .delete-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .delete-btn:hover {
+            color: #ff4444;
+            background-color: rgba(255, 68, 68, 0.2);
+        }
+
+        .delete-btn svg {
+            width: 10px;
+            height: 10px;
         }
 
         #notification {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
+            bottom: 10px;
+            left: 10px;
             background-color: #333333;
             color: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
             opacity: 0;
-            transition: opacity 0.5s ease, transform 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.2s ease;
             z-index: 10000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transform: translateY(20px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(10px);
             display: none;
+            max-width: 200px; /* Limit width */
         }
 
         #notification.show {
@@ -110,34 +147,6 @@
 
         #notification.info {
             background-color: #17a2b8;
-        }
-
-        .close-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 8px;
-            background: none;
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-            padding: 0;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-        }
-
-        .close-btn:hover {
-            color: #ff4444;
-            background-color: rgba(255, 68, 68, 0.2);
-            transform: scale(1.1);
-        }
-
-        .close-btn svg {
-            width: 12px;
-            height: 12px;
         }
 
         .add-tab {
@@ -160,13 +169,11 @@
             position: relative;
             z-index: 1;
             outline: none;
-            transition: all 0.3s ease;
         }
 
         .add-tab:hover {
             background-color: #1a1a1a;
             border: 1px solid #cccccc;
-            transform: scale(1.1) rotate(90deg);
         }
 
         .add-tab svg {
@@ -192,63 +199,27 @@
             min-height: 0;
         }
 
-        #controls {
+        #context-menu {
             position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(42, 42, 42, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            width: 100px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.2s ease;
-            z-index: 1000;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1),
-                        inset 0 0 8px rgba(0, 0, 0, 0.2);
-        }
-
-        #controls.visible {
-            opacity: 1;
-            transform: translateX(-50%) scale(1.02);
-        }
-
-        .execute-btn, .clear-btn {
-            background: #000000;
-            color: #ffffff;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            border-radius: 50%;
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
             font-family: 'Poppins', sans-serif;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .execute-btn:hover, .clear-btn:hover {
-            background: #1a1a1a;
-            transform: scale(1.1);
-        }
-
-        .execute-btn:active, .clear-btn:active {
-            background: #2a2a2a;
-            transform: scale(0.95);
-        }
-
-        .execute-btn i, .clear-btn i {
-            font-size: 14px;
             color: #ffffff;
+            min-width: 150px;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background-color: #3a3a3a;
         }
     </style>
 </head>
@@ -259,16 +230,12 @@
     <div class="tab-header" id="tabHeader"></div>
     <div id="editor-container">
         <div id="monaco-editor"></div>
-        <div id="controls">
-            <button class="clear-btn" onclick="clearText()">
-                <i class="vr-ic_fluent_delete_24_regular"></i>
-            </button>
-            <button class="execute-btn" onclick="executeScript()">
-                <i class="vr-ic_fluent_play_24_regular"></i>
-            </button>
-        </div>
     </div>
     <div id="notification"></div>
+    <div id="context-menu" style="display: none;">
+        <div class="context-menu-item" onclick="executeScript()">Execute</div>
+        <div class="context-menu-item" onclick="clearText()">Clear</div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
     <script>
@@ -291,36 +258,21 @@
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const loadingScreen = document.getElementById('loading-screen');
-                loadingScreen.classList.add('fade-out');
-                setTimeout(() => loadingScreen.style.display = 'none', 500);
+                if (loadingScreen) {
+                    loadingScreen.classList.add('fade-out');
+                    setTimeout(() => loadingScreen.style.display = 'none', 500);
+                }
             }, 1000);
 
             const tabHeader = document.getElementById('tabHeader');
-            tabHeader.addEventListener('wheel', (e) => {
-                e.preventPropagation();
-                tabHeader.scrollLeft += e.deltaY * 0.5;
-            });
+            if (tabHeader) {
+                tabHeader.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    tabHeader.scrollLeft += e.deltaY > 0 ? 50 : -50;
+                });
+            }
 
             resizeEditor();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            const controls = document.getElementById('controls');
-            const rect = controls.getBoundingClientRect();
-            const buffer = 50;
-
-            const isNearControls = (
-                e.clientX >= rect.left - buffer &&
-                e.clientX <= rect.right + buffer &&
-                e.clientY >= rect.top - buffer &&
-                e.clientY <= rect.bottom + buffer
-            );
-
-            if (isNearControls) {
-                controls.classList.add('visible');
-            } else {
-                controls.classList.remove('visible');
-            }
         });
 
         function createTab(name = '', content = '-- NOTHING X HUB') {
@@ -334,14 +286,16 @@
                 const tabId = `tab-${newNumber}`;
                 const tabName = name || `script${newNumber}.lua`;
 
-                if (tabs.some(tab => tab.name === tabName)) {
-                    console.warn(`Tab name ${tabName} already exists, generating a new one.`);
-                    return createTab();
+                let finalName = tabName;
+                let counter = 1;
+                while (tabs.some(tab => tab.name === finalName)) {
+                    finalName = `script${newNumber}-${counter}.lua`;
+                    counter++;
                 }
 
                 const tabData = { 
                     id: tabId, 
-                    name: tabName, 
+                    name: finalName, 
                     content: content 
                 };
                 
@@ -351,11 +305,14 @@
                 selectTab(tabId);
             } catch (error) {
                 console.error('Error creating tab:', error);
+                showNotification('Failed to create tab', 'error');
             }
         }
 
         function renderTabs() {
             const tabHeader = document.getElementById('tabHeader');
+            if (!tabHeader) return;
+
             tabHeader.innerHTML = '';
 
             tabs.forEach(tab => {
@@ -366,23 +323,23 @@
                 const tabText = document.createElement('span');
                 tabText.textContent = tab.name;
 
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'close-btn';
-                closeBtn.innerHTML = `
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = `
                     <svg viewBox="0 0 16 16" fill="currentColor">
                         <path d="M2.146 2.146a.5.5 0 0 1 .708 0L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854a.5.5 0 0 1 0-.708z"/>
                     </svg>
                 `;
-                closeBtn.onclick = (e) => {
+                deleteBtn.onclick = (e) => {
                     e.stopPropagation();
                     closeTab(tab.id);
                 };
 
                 tabDiv.appendChild(tabText);
-                tabDiv.appendChild(closeBtn);
+                tabDiv.appendChild(deleteBtn);
                 
                 tabDiv.onclick = (e) => {
-                    if (e.target !== closeBtn && !closeBtn.contains(e.target)) {
+                    if (e.target !== deleteBtn && !deleteBtn.contains(e.target)) {
                         selectTab(tab.id);
                     }
                 };
@@ -413,7 +370,7 @@
                 if (activeTabId && editor) {
                     const currentTab = tabs.find(t => t.id === activeTabId);
                     if (currentTab) {
-                        currentTab.content = editor.getValue();
+                        currentTab.content = editor.getValue() || '';
                     }
                 }
 
@@ -426,6 +383,7 @@
                 renderTabs();
             } catch (error) {
                 console.error('Error selecting tab:', error);
+                showNotification('Failed to select tab', 'error');
             }
         }
 
@@ -450,8 +408,20 @@
                 }
 
                 renderTabs();
+                saveTabs();
             } catch (error) {
                 console.error('Error closing tab:', error);
+                showNotification('Failed to close tab', 'error');
+            }
+        }
+
+        function saveTabs() {
+            try {
+                localStorage.setItem('savedTabs', JSON.stringify(tabs));
+                localStorage.setItem('activeTabId', activeTabId || '');
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+                showNotification('Failed to save tabs', 'error');
             }
         }
 
@@ -515,49 +485,75 @@
                     minimap: { enabled: false },
                     automaticLayout: true,
                     fontSize: 14,
-                    lineNumbers: 'on'
+                    lineNumbers: 'on',
+                    contextmenu: true
+                });
+
+                // Add custom context menu entries
+                editor.addAction({
+                    id: 'execute-script',
+                    label: 'Execute',
+                    contextMenuGroupId: 'navigation',
+                    contextMenuOrder: 1.5,
+                    run: function(ed) {
+                        executeScript();
+                    }
+                });
+
+                editor.addAction({
+                    id: 'clear-text',
+                    label: 'Clear',
+                    contextMenuGroupId: 'navigation',
+                    contextMenuOrder: 1.6,
+                    run: function(ed) {
+                        clearText();
+                    }
                 });
 
                 editor.onDidChangeModelContent(() => {
                     const tabData = tabs.find(t => t.id === activeTabId);
                     if (tabData) tabData.content = editor.getValue();
+                    saveTabs();
                 });
 
-                setInterval(() => {
-                    try {
-                        localStorage.setItem('savedTabs', JSON.stringify(tabs));
-                        localStorage.setItem('activeTabId', activeTabId);
-                    } catch (error) {
-                        console.error('Error saving to localStorage:', error);
-                    }
-                }, 0);
+                try {
+                    const savedTabs = JSON.parse(localStorage.getItem('savedTabs') || '[]');
+                    const savedActiveTabId = localStorage.getItem('activeTabId');
 
-                const savedTabs = JSON.parse(localStorage.getItem('savedTabs') || '[]');
-                const savedActiveTabId = localStorage.getItem('activeTabId');
-
-                if (savedTabs.length > 0) {
-                    tabs = savedTabs;
-                    tabCount = tabs.length;
-                    renderTabs();
-                    if (savedActiveTabId && tabs.find(t => t.id === savedActiveTabId)) {
-                        selectTab(savedActiveTabId);
-                    } else if (tabs.length > 0) {
-                        selectTab(tabs[0].id);
+                    if (savedTabs.length > 0) {
+                        tabs = savedTabs;
+                        tabCount = tabs.length;
+                        renderTabs();
+                        if (savedActiveTabId && tabs.find(t => t.id === savedActiveTabId)) {
+                            selectTab(savedActiveTabId);
+                        } else if (tabs.length > 0) {
+                            selectTab(tabs[0].id);
+                        }
+                    } else {
+                        createTab('script1.lua', '-- NOTHING X HUB');
                     }
-                } else {
+                } catch (error) {
+                    console.error('Error loading saved tabs:', error);
                     createTab('script1.lua', '-- NOTHING X HUB');
                 }
 
                 resizeEditor();
             } catch (error) {
                 console.error('Error initializing editor:', error);
+                showNotification('Failed to initialize editor', 'error');
             }
         });
+
+        // Remove the custom context menu since we're using Monaco's built-in menu
+        const contextMenu = document.getElementById('context-menu');
+        contextMenu.style.display = 'none';
 
         let notificationTimeout = null;
 
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
+            if (!notification) return;
+
             if (notificationTimeout) {
                 clearTimeout(notificationTimeout);
             }
@@ -572,11 +568,12 @@
                 notification.classList.remove('show');
                 setTimeout(() => {
                     notification.style.display = 'none';
-                }, 300);
-            }, 3000);
+                }, 200);
+            }, 2000); // Reduced to 2 seconds
         }
 
         function executeScript() {
+            if (!editor) return;
             const script = editor.getValue();
             fetch('/execute', {
                 method: 'POST',
@@ -601,7 +598,7 @@
                 editor.setValue('');
                 const tabData = tabs.find(t => t.id === activeTabId);
                 if (tabData) tabData.content = '';
-                localStorage.setItem('savedTabs', JSON.stringify(tabs));
+                saveTabs();
                 showNotification('Text Cleared', 'success');
             }
         }

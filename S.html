@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -236,6 +236,7 @@
     <div id="context-menu" style="display: none;">
         <div class="context-menu-item" onclick="executeScript()">Execute</div>
         <div class="context-menu-item" onclick="clearText()">Clear</div>
+        <div class="context-menu-item" onclick="attachScript()">Attach</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
@@ -568,8 +569,18 @@
         }
 
         function executeScript() {
-            if (!editor) return;
-            const script = editor.getValue();
+            if (!editor) {
+                showNotification('Editor not initialized', 'error');
+                return;
+            }
+            let script = editor.getValue().trim();
+
+            // Check for /attach command
+            if (script === '/attach') {
+                attachScript();
+                return;
+            }
+
             fetch('/execute', {
                 method: 'POST',
                 headers: {
@@ -577,16 +588,49 @@
                 },
                 body: 'script=' + encodeURIComponent(script)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
-                console.log(data);
+                console.log('Execute response:', data);
                 showNotification('Script Executed Successfully', 'success');
-                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+                document.getElementById('context-menu').style.display = 'none';
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error executing script:', error);
                 showNotification('Error Executing Script', 'error');
-                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+                document.getElementById('context-menu').style.display = 'none';
+            });
+        }
+
+        function attachScript() {
+            if (!editor) {
+                showNotification('Editor not initialized', 'error');
+                return;
+            }
+            const script = editor.getValue().trim();
+
+            fetch('/attach', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'script=' + encodeURIComponent(script)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Attach response:', data);
+                showNotification(' Attached Successfully', 'success');
+                document.getElementById('context-menu').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error attaching :', error);
+                showNotification('Error Attaching', 'error');
+                document.getElementById('context-menu').style.display = 'none';
             });
         }
 
@@ -597,7 +641,7 @@
                 if (tabData) tabData.content = '';
                 saveTabs();
                 showNotification('Text Cleared', 'success');
-                document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+                document.getElementById('context-menu').style.display = 'none';
             }
         }
     </script>

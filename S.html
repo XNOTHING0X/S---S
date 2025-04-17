@@ -239,383 +239,394 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
-    <script>
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' }});
+<script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' }});
 
-        let tabs = [];
-        let tabCount = 0;
-        let activeTabId = null;
-        let editor;
+    let tabs = [];
+    let tabCount = 0;
+    let activeTabId = null;
+    let editor;
 
-        function resizeEditor() {
-            const editorContainer = document.getElementById('editor-container');
-            if (editorContainer && editor) {
-                editorContainer.style.height = `${window.innerHeight - 38}px`;
-                editor.layout();
+    function resizeEditor() {
+        const editorContainer = document.getElementById('editor-container');
+        if (editorContainer && editor) {
+            editorContainer.style.height = `${window.innerHeight - 38}px`;
+            editor.layout();
+        }
+    }
+
+    window.addEventListener('resize', resizeEditor);
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => loadingScreen.style.display = 'none', 500);
             }
+        }, 1000);
+
+        const tabHeader = document.getElementById('tabHeader');
+        if (tabHeader) {
+            tabHeader.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                tabHeader.scrollLeft += e.deltaY > 0 ? 50 : -50;
+            });
         }
 
-        window.addEventListener('resize', resizeEditor);
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('fade-out');
-                    setTimeout(() => loadingScreen.style.display = 'none', 500);
-                }
-            }, 1000);
+        resizeEditor();
+    });
 
-            const tabHeader = document.getElementById('tabHeader');
-            if (tabHeader) {
-                tabHeader.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    tabHeader.scrollLeft += e.deltaY > 0 ? 50 : -50;
-                });
+    function createTab(name = '', content = '-- NOTHING X HUB') {
+        try {
+            const existingNumbers = tabs.map(tab => {
+                const match = tab.name.match(/script(\d+)\.lua/);
+                return match ? parseInt(match[1]) : 0;
+            });
+
+            const newNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
+            const tabId = `tab-${newNumber}`;
+            const tabName = name || `script${newNumber}.lua`;
+
+            let finalName = tabName;
+            let counter = 1;
+            while (tabs.some(tab => tab.name === finalName)) {
+                finalName = `script${newNumber}-${counter}.lua`;
+                counter++;
+            }
+
+            const tabData = { 
+                id: tabId, 
+                name: finalName, 
+                content: content 
+            };
+            
+            tabs.push(tabData);
+            tabCount++;
+            renderTabs();
+            selectTab(tabId);
+        } catch (error) {
+            console.error('Error creating tab:', error);
+        }
+    }
+
+    function renderTabs() {
+        const tabHeader = document.getElementById('tabHeader');
+        if (!tabHeader) return;
+
+        tabHeader.innerHTML = '';
+
+        tabs.forEach(tab => {
+            const tabDiv = document.createElement('div');
+            tabDiv.className = `tab${tab.id === activeTabId ? ' active' : ''}`;
+            tabDiv.dataset.tabId = tab.id;
+            
+            const tabText = document.createElement('span');
+            tabText.textContent = tab.name;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = `
+                <svg viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M2.146 2.146a.5.5 0 0 1 .708 0L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            `;
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                closeTab(tab.id);
+            };
+
+            tabDiv.appendChild(tabText);
+            tabDiv.appendChild(deleteBtn);
+            
+            tabDiv.onclick = (e) => {
+                if (e.target !== deleteBtn && !deleteBtn.contains(e.target)) {
+                    selectTab(tab.id);
+                }
+            };
+
+            tabHeader.appendChild(tabDiv);
+        });
+
+        const addTabBtn = document.createElement('div');
+        addTabBtn.className = 'add-tab';
+        addTabBtn.innerHTML = `
+            <svg viewBox="0 0 24 24">
+                <path d="M12 5v14m-7-7h14"/>
+            </svg>
+        `;
+        addTabBtn.onclick = () => createTab();
+        tabHeader.appendChild(addTabBtn);
+
+        if (activeTabId) {
+            const activeTabElement = tabHeader.querySelector(`.tab[data-tab-id="${activeTabId}"]`);
+            if (activeTabElement) {
+                activeTabElement.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+            }
+        }
+    }
+
+    function selectTab(tabId) {
+        try {
+            if (activeTabId && editor) {
+                const currentTab = tabs.find(t => t.id === activeTabId);
+                if (currentTab) {
+                    currentTab.content = editor.getValue() || '';
+                }
+            }
+
+            activeTabId = tabId;
+            const tabData = tabs.find(t => t.id === tabId);
+            if (tabData && editor) {
+                editor.setValue(tabData.content || '');
+                editor.focus();
+            }
+            renderTabs();
+        } catch (error) {
+            console.error('Error selecting tab:', error);
+            showNotification('Failed to select tab', 'error');
+        }
+    }
+
+    function closeTab(tabId) {
+        try {
+            const tabIndex = tabs.findIndex(t => t.id === tabId);
+            if (tabIndex === -1) return;
+
+            tabs.splice(tabIndex, 1);
+            tabCount--;
+
+            if (tabs.length === 0) {
+                activeTabId = null;
+                if (editor) editor.setValue('');
+                createTab('script1.lua', '-- NOTHING X HUB');
+            } else if (activeTabId === tabId) {
+                const newIndex = tabIndex === 0 ? 0 : tabIndex - 1;
+                activeTabId = tabs[newIndex]?.id || tabs[0]?.id;
+                if (activeTabId && editor) {
+                    editor.setValue(tabs.find(t => t.id === activeTabId)?.content || '');
+                }
+            }
+
+            renderTabs();
+            saveTabs();
+        } catch (error) {
+            console.error('Error closing tab:', error);
+            showNotification('Failed to close tab', 'error');
+        }
+    }
+
+    function saveTabs() {
+        try {
+            // Update the content of the active tab before saving
+            if (activeTabId && editor) {
+                const currentTab = tabs.find(t => t.id === activeTabId);
+                if (currentTab) {
+                    currentTab.content = editor.getValue() || '';
+                }
+            }
+            localStorage.setItem('savedTabs', JSON.stringify(tabs));
+            localStorage.setItem('activeTabId', activeTabId || '');
+        } catch (error) {
+            console.error('Error saving to localStorage:', error);
+            showNotification('Failed to save tabs', 'error');
+        }
+    }
+
+    require(['vs/editor/editor.main'], function() {
+        try {
+            monaco.languages.setMonarchTokensProvider('lua', {
+                tokenizer: {
+                    root: [
+                        [/\b(_G|_VERSION|Enum|game|plugin|shared|script|workspace|DebuggerManager|elapsedTime|LoadLibrary|PluginManager|settings|tick|time|typeof|UserSettings|HumanoidRootPart)\b/, 'roblox-global'],
+                        [/\b(and|break|do|else|elseif|end|false|for|function|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b/, 'keyword'],
+                        [/\bmath\.(abs|acos|asin|atan|atan2|ceil|cos|cosh|deg|exp|floor|fmod|frexp|huge|ldexp|log|max|min|modf|pi|pow|rad|random|randomseed|sin|sinh|sqrt|tan|tanh)\b/, 'math-function'],
+                        [/\btable\.(concat|foreach|foreachi|sort|insert|remove)\b/, 'table-function'],
+                        [/\b(Color3|Instance|BrickColor|Vector3|Vector2)\.new\b/, 'roblox-constructor'],
+                        [/\bdebug\.getinfo\b/, 'debug-function'],
+                        [/\bstring\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)\b/, 'string-function'],
+                        [/\bcoroutine\.(create|resume|running|status|wrap|yield)\b/, 'coroutine-function'],
+                        [/\b(Drawing|debug|Instance|Color3|Vector3|Vector2|BrickColor|math|table|string|coroutine|Humanoid|ClickDetector|LocalScript|Model|ModuleScript|Mouse|Part|Script|Tool|RunService|UserInputService|Workspace|ReplicatedFirst|SoundService|Character|CoreGui|ReplicatedStorage|Lighting|Players|PlayerGui|PlayerScript|LocalPlayer|Parent)\b/, 'roblox-class'],
+                        [/\b(print|warn|wid|info|printidentity|assert|collectgarbage|error|getfenv|getmetatable|setmetatable|ipairs|loadfile|loadstring|newproxy|next|pairs|pcall|spawn|rawequal|rawget|rawset|select|tonumber|tostring|type|unpack|xpcall|delay|stats)\b/, 'utility-function'],
+                        [/(?<=:)(Remove|BreakJoints|GetChildren|FindFirstChild|FireServer|InvokeServer|ClearAllChildren|Clone|Destroy|FindFirstAncestor|FindFirstAncestorOfClass|FindFirstAncestorWhichIsA|FindFirstChildOfClass|FindFirstChildWhichIsA|GetDebugId|GetDescendants|GetFullName|IsA|GetPropertyChangedSignal|IsAncestorOf|IsDescendantOf|WaitForChild|Connect|AncestryChanged|Changed|ChildAdded|ChildRemoved|DescendantAdded|DescendantRemoving|GetService|GetObjects|HttpGet|Wait)\b/, 'roblox-method'],
+                        [/\b(Visible|Color|Transparency|Thickness|From|To|Text|Size|Center|Outline|OutlineColor|Position|TextBounds|Font|Data|Rounding|NumSides|Radius|Filled|PointA|PointB|PointC|PointD)\b/, 'roblox-property'],
+                        [/"[^"]*"/, 'string'],
+                        [/'[^']*'/, 'string'],
+                        [/\d+/, 'number'],
+                        [/--.*$/, 'comment']
+                    ]
+                }
+            });
+
+            monaco.editor.defineTheme('custom-theme', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'keyword', foreground: 'c678dd' },
+                    { token: 'string', foreground: '98c379' },
+                    { token: 'number', foreground: 'd19a66' },
+                    { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                    { token: 'operator', foreground: '529875' },
+                    { token: 'roblox-global', foreground: 'e06c75' },
+                    { token: 'math-function', foreground: '61afef' },
+                    { token: 'table-function', foreground: '61afef' },
+                    { token: 'roblox-constructor', foreground: 'd19a66' },
+                    { token: 'debug-function', foreground: 'e5c07b' },
+                    { token: 'string-function', foreground: '61afef' },
+                    { token: 'coroutine-function', foreground: '61afef' },
+                    { token: 'roblox-class', foreground: 'e06c75' },
+                    { token: 'utility-function', foreground: 'e5c07b' },
+                    { token: 'roblox-method', foreground: 'c678dd' },
+                    { token: 'roblox-property', foreground: '98c379' }
+                ],
+                colors: {
+                    'editor.background': '#000000',
+                    'minimap.background': '#000000',
+                    'editor.foreground': '#ffffff'
+                }
+            });
+
+            editor = monaco.editor.create(document.getElementById('monaco-editor'), {
+                value: '',
+                language: 'lua',
+                theme: 'custom-theme',
+                minimap: { enabled: false },
+                automaticLayout: true,
+                fontSize: 14,
+                lineNumbers: 'on',
+                contextmenu: false // Disable default context menu
+            });
+
+            editor.onDidChangeModelContent(() => {
+                const tabData = tabs.find(t => t.id === activeTabId);
+                if (tabData) tabData.content = editor.getValue();
+                saveTabs();
+            });
+
+            try {
+                const savedTabs = JSON.parse(localStorage.getItem('savedTabs') || '[]');
+                const savedActiveTabId = localStorage.getItem('activeTabId');
+
+                if (savedTabs.length > 0) {
+                    tabs = savedTabs;
+                    tabCount = tabs.length;
+                    renderTabs();
+                    if (savedActiveTabId && tabs.find(t => t.id === savedActiveTabId)) {
+                        selectTab(savedActiveTabId);
+                    } else if (tabs.length > 0) {
+                        selectTab(tabs[0].id);
+                    }
+                } else {
+                    createTab('script1.lua', '-- NOTHING X HUB');
+                }
+            } catch (error) {
+                console.error('Error loading saved tabs:', error);
+                createTab('script1.lua', '-- NOTHING X HUB');
             }
 
             resizeEditor();
-        });
 
-        function createTab(name = '', content = '-- NOTHING X HUB') {
-            try {
-                const existingNumbers = tabs.map(tab => {
-                    const match = tab.name.match(/script(\d+)\.lua/);
-                    return match ? parseInt(match[1]) : 0;
-                });
+            // Add right-click event listener to show custom context menu
+            const editorContainer = document.getElementById('monaco-editor');
+            const contextMenu = document.getElementById('context-menu');
 
-                const newNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
-                const tabId = `tab-${newNumber}`;
-                const tabName = name || `script${newNumber}.lua`;
-
-                let finalName = tabName;
-                let counter = 1;
-                while (tabs.some(tab => tab.name === finalName)) {
-                    finalName = `script${newNumber}-${counter}.lua`;
-                    counter++;
-                }
-
-                const tabData = { 
-                    id: tabId, 
-                    name: finalName, 
-                    content: content 
-                };
-                
-                tabs.push(tabData);
-                tabCount++;
-                renderTabs();
-                selectTab(tabId);
-            } catch (error) {
-                console.error('Error creating tab:', error);
-                showNotification('Failed to create tab', 'error');
-            }
-        }
-
-        function renderTabs() {
-            const tabHeader = document.getElementById('tabHeader');
-            if (!tabHeader) return;
-
-            tabHeader.innerHTML = '';
-
-            tabs.forEach(tab => {
-                const tabDiv = document.createElement('div');
-                tabDiv.className = `tab${tab.id === activeTabId ? ' active' : ''}`;
-                tabDiv.dataset.tabId = tab.id;
-                
-                const tabText = document.createElement('span');
-                tabText.textContent = tab.name;
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.innerHTML = `
-                    <svg viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M2.146 2.146a.5.5 0 0 1 .708 0L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854a.5.5 0 0 1 0-.708z"/>
-                    </svg>
-                `;
-                deleteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
-                };
-
-                tabDiv.appendChild(tabText);
-                tabDiv.appendChild(deleteBtn);
-                
-                tabDiv.onclick = (e) => {
-                    if (e.target !== deleteBtn && !deleteBtn.contains(e.target)) {
-                        selectTab(tab.id);
-                    }
-                };
-
-                tabHeader.appendChild(tabDiv);
+            editorContainer.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                contextMenu.style.display = 'block';
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY}px`;
             });
 
-            const addTabBtn = document.createElement('div');
-            addTabBtn.className = 'add-tab';
-            addTabBtn.innerHTML = `
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 5v14m-7-7h14"/>
-                </svg>
-            `;
-            addTabBtn.onclick = () => createTab();
-            tabHeader.appendChild(addTabBtn);
-
-            if (activeTabId) {
-                const activeTabElement = tabHeader.querySelector(`.tab[data-tab-id="${activeTabId}"]`);
-                if (activeTabElement) {
-                    activeTabElement.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+            // Hide context menu when clicking elsewhere
+            document.addEventListener('click', (e) => {
+                if (!contextMenu.contains(e.target)) {
+                    contextMenu.style.display = 'none';
                 }
-            }
-        }
+            });
 
-        function selectTab(tabId) {
-            try {
-                if (activeTabId && editor) {
-                    const currentTab = tabs.find(t => t.id === activeTabId);
-                    if (currentTab) {
-                        currentTab.content = editor.getValue() || '';
-                    }
-                }
-
-                activeTabId = tabId;
-                const tabData = tabs.find(t => t.id === tabId);
-                if (tabData && editor) {
-                    editor.setValue(tabData.content || '');
-                    editor.focus();
-                }
-                renderTabs();
-            } catch (error) {
-                console.error('Error selecting tab:', error);
-                showNotification('Failed to select tab', 'error');
-            }
-        }
-
-        function closeTab(tabId) {
-            try {
-                const tabIndex = tabs.findIndex(t => t.id === tabId);
-                if (tabIndex === -1) return;
-
-                tabs.splice(tabIndex, 1);
-                tabCount--;
-
-                if (tabs.length === 0) {
-                    activeTabId = null;
-                    if (editor) editor.setValue('');
-                    createTab('script1.lua', '-- NOTHING X HUB');
-                } else if (activeTabId === tabId) {
-                    const newIndex = tabIndex === 0 ? 0 : tabIndex - 1;
-                    activeTabId = tabs[newIndex]?.id || tabs[0]?.id;
-                    if (activeTabId && editor) {
-                        editor.setValue(tabs.find(t => t.id === activeTabId)?.content || '');
-                    }
-                }
-
-                renderTabs();
+            // Start auto-save every 10 seconds
+            setInterval(() => {
                 saveTabs();
-            } catch (error) {
-                console.error('Error closing tab:', error);
-                showNotification('Failed to close tab', 'error');
-            }
+                // Optional: Show notification only if there are changes
+                // showNotification('Auto-saved tabs', 'success');
+            }, 0);
+
+        } catch (error) {
+            console.error('Error initializing editor:', error);
         }
+    });
 
-        function saveTabs() {
-            try {
-                localStorage.setItem('savedTabs', JSON.stringify(tabs));
-                localStorage.setItem('activeTabId', activeTabId || '');
-            } catch (error) {
-                console.error('Error saving to localStorage:', error);
-                showNotification('Failed to save tabs', 'error');
-            }
+    let notificationTimeout = null;
+
+    function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        if (!notification) return;
+
+        if (notificationTimeout) {
+            clearTimeout(notificationTimeout);
         }
-
-        require(['vs/editor/editor.main'], function() {
-            try {
-                monaco.languages.setMonarchTokensProvider('lua', {
-                    tokenizer: {
-                        root: [
-                            [/\b(_G|_VERSION|Enum|game|plugin|shared|script|workspace|DebuggerManager|elapsedTime|LoadLibrary|PluginManager|settings|tick|time|typeof|UserSettings|HumanoidRootPart)\b/, 'roblox-global'],
-                            [/\b(and|break|do|else|elseif|end|false|for|function|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b/, 'keyword'],
-                            [/\bmath\.(abs|acos|asin|atan|atan2|ceil|cos|cosh|deg|exp|floor|fmod|frexp|huge|ldexp|log|max|min|modf|pi|pow|rad|random|randomseed|sin|sinh|sqrt|tan|tanh)\b/, 'math-function'],
-                            [/\btable\.(concat|foreach|foreachi|sort|insert|remove)\b/, 'table-function'],
-                            [/\b(Color3|Instance|BrickColor|Vector3|Vector2)\.new\b/, 'roblox-constructor'],
-                            [/\bdebug\.getinfo\b/, 'debug-function'],
-                            [/\bstring\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)\b/, 'string-function'],
-                            [/\bcoroutine\.(create|resume|running|status|wrap|yield)\b/, 'coroutine-function'],
-                            [/\b(Drawing|debug|Instance|Color3|Vector3|Vector2|BrickColor|math|table|string|coroutine|Humanoid|ClickDetector|LocalScript|Model|ModuleScript|Mouse|Part|Script|Tool|RunService|UserInputService|Workspace|ReplicatedFirst|SoundService|Character|CoreGui|ReplicatedStorage|Lighting|Players|PlayerGui|PlayerScript|LocalPlayer|Parent)\b/, 'roblox-class'],
-                            [/\b(print|warn|wait|info|printidentity|assert|collectgarbage|error|getfenv|getmetatable|setmetatable|ipairs|loadfile|loadstring|newproxy|next|pairs|pcall|spawn|rawequal|rawget|rawset|select|tonumber|tostring|type|unpack|xpcall|delay|stats)\b/, 'utility-function'],
-                            [/(?<=:)(Remove|BreakJoints|GetChildren|FindFirstChild|FireServer|InvokeServer|ClearAllChildren|Clone|Destroy|FindFirstAncestor|FindFirstAncestorOfClass|FindFirstAncestorWhichIsA|FindFirstChildOfClass|FindFirstChildWhichIsA|GetDebugId|GetDescendants|GetFullName|IsA|GetPropertyChangedSignal|IsAncestorOf|IsDescendantOf|WaitForChild|Connect|AncestryChanged|Changed|ChildAdded|ChildRemoved|DescendantAdded|DescendantRemoving|GetService|GetObjects|HttpGet|Wait)\b/, 'roblox-method'],
-                            [/\b(Visible|Color|Transparency|Thickness|From|To|Text|Size|Center|Outline|OutlineColor|Position|TextBounds|Font|Data|Rounding|NumSides|Radius|Filled|PointA|PointB|PointC|PointD)\b/, 'roblox-property'],
-                            [/"[^"]*"/, 'string'],
-                            [/'[^']*'/, 'string'],
-                            [/\d+/, 'number'],
-                            [/--.*$/, 'comment']
-                        ]
-                    }
-                });
-
-                monaco.editor.defineTheme('custom-theme', {
-                    base: 'vs-dark',
-                    inherit: true,
-                    rules: [
-                        { token: 'keyword', foreground: 'c678dd' },
-                        { token: 'string', foreground: '98c379' },
-                        { token: 'number', foreground: 'd19a66' },
-                        { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
-                        { token: 'operator', foreground: '529875' },
-                        { token: 'roblox-global', foreground: 'e06c75' },
-                        { token: 'math-function', foreground: '61afef' },
-                        { token: 'table-function', foreground: '61afef' },
-                        { token: 'roblox-constructor', foreground: 'd19a66' },
-                        { token: 'debug-function', foreground: 'e5c07b' },
-                        { token: 'string-function', foreground: '61afef' },
-                        { token: 'coroutine-function', foreground: '61afef' },
-                        { token: 'roblox-class', foreground: 'e06c75' },
-                        { token: 'utility-function', foreground: 'e5c07b' },
-                        { token: 'roblox-method', foreground: 'c678dd' },
-                        { token: 'roblox-property', foreground: '98c379' }
-                    ],
-                    colors: {
-                        'editor.background': '#000000',
-                        'minimap.background': '#000000',
-                        'editor.foreground': '#ffffff'
-                    }
-                });
-
-                editor = monaco.editor.create(document.getElementById('monaco-editor'), {
-                    value: '',
-                    language: 'lua',
-                    theme: 'custom-theme',
-                    minimap: { enabled: false },
-                    automaticLayout: true,
-                    fontSize: 14,
-                    lineNumbers: 'on',
-                    contextmenu: false // Disable default context menu
-                });
-
-                editor.onDidChangeModelContent(() => {
-                    const tabData = tabs.find(t => t.id === activeTabId);
-                    if (tabData) tabData.content = editor.getValue();
-                    saveTabs();
-                });
-
-                try {
-                    const savedTabs = JSON.parse(localStorage.getItem('savedTabs') || '[]');
-                    const savedActiveTabId = localStorage.getItem('activeTabId');
-
-                    if (savedTabs.length > 0) {
-                        tabs = savedTabs;
-                        tabCount = tabs.length;
-                        renderTabs();
-                        if (savedActiveTabId && tabs.find(t => t.id === savedActiveTabId)) {
-                            selectTab(savedActiveTabId);
-                        } else if (tabs.length > 0) {
-                            selectTab(tabs[0].id);
-                        }
-                    } else {
-                        createTab('script1.lua', '-- NOTHING X HUB');
-                    }
-                } catch (error) {
-                    console.error('Error loading saved tabs:', error);
-                    createTab('script1.lua', '-- NOTHING X HUB');
-                }
-
-                resizeEditor();
-
-                // Add right-click event listener to show custom context menu
-                const editorContainer = document.getElementById('monaco-editor');
-                const contextMenu = document.getElementById('context-menu');
-
-                editorContainer.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    contextMenu.style.display = 'block';
-                    contextMenu.style.left = `${e.clientX}px`;
-                    contextMenu.style.top = `${e.clientY}px`;
-                });
-
-                // Hide context menu when clicking elsewhere
-                document.addEventListener('click', (e) => {
-                    if (!contextMenu.contains(e.target)) {
-                        contextMenu.style.display = 'none';
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error initializing editor:', error);
-                showNotification('Failed to initialize editor', 'error');
-            }
-        });
-
-        let notificationTimeout = null;
-
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            if (!notification) return;
-
-            if (notificationTimeout) {
-                clearTimeout(notificationTimeout);
-            }
-            notification.classList.remove('success', 'error', 'info');
-            notification.classList.add(type);
-            notification.textContent = message;
-            notification.style.display = 'block';
+        notification.classList.remove('success', 'error', 'info');
+        notification.classList.add(type);
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        notificationTimeout = setTimeout(() => {
+            notification.classList.remove('show');
             setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            notificationTimeout = setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 200);
-            }, 2000);
-        }
-
-function executeScript() {
-    const script = editor.getValue();
-    fetch('/E', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'script=' + encodeURIComponent(script)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        showNotification('Script Executed Successfully', 'success');
-      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error Executing Script', 'error');
-      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
-    });
-}
-
-// Updated clearText function with success notification
-function clearText() {
-    if (activeTabId && editor) {
-        editor.setValue('');
-        const tabData = tabs.find(t => t.id === activeTabId);
-        if (tabData) tabData.content = '';
-        localStorage.setItem('savedTabs', JSON.stringify(tabs));
-        showNotification('Text Cleared', 'success');
-      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+                notification.style.display = 'none';
+            }, 200);
+        }, 2000);
     }
-}
-function attachScript() {
-    fetch('/A', {
-        method: 'POST' // ← to MUSI być POST
-    })
-    .then(response => response.json())
-    .then(data => {
-        showNotification('Attached successfully!', 'success');
-            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
 
-    })
-    .catch(error => {
-        showNotification('Failed to attach.', 'error');
-        console.error('Attach error:', error);
-      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
-    });
-}
-    </script>
+    function executeScript() {
+        const script = editor.getValue();
+        fetch('/E', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'script=' + encodeURIComponent(script)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            showNotification('Script Executed Successfully', 'success');
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error Executing Script', 'error');
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+        });
+    }
+
+    function clearText() {
+        if (activeTabId && editor) {
+            editor.setValue('');
+            const tabData = tabs.find(t => t.id === activeTabId);
+            if (tabData) tabData.content = '';
+            localStorage.setItem('savedTabs', JSON.stringify(tabs));
+            showNotification('Text Cleared', 'success');
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+        }
+    }
+
+    function attachScript() {
+        fetch('/A', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            showNotification('Attached successfully!', 'success');
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+        })
+        .catch(error => {
+            showNotification('Failed to attach.', 'error');
+            console.error('Attach error:', error);
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+        });
+    }
+</script>
 </body>
 </html>

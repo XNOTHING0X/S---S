@@ -567,82 +567,55 @@
             }, 2000);
         }
 
-        function executeScript() {
-            if (!editor) {
-                showNotification('Editor not initialized', 'error');
-                return;
-            }
-            let script = editor.getValue().trim();
+function executeScript() {
+    const script = editor.getValue();
+    fetch('/E', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'script=' + encodeURIComponent(script)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        showNotification('Script Executed Successfully', 'success');
+      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error Executing Script', 'error');
+      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+    });
+}
 
-            // Check for /attach command
-            if (script === '/attach') {
-                attachScript();
-                return;
-            }
+// Updated clearText function with success notification
+function clearText() {
+    if (activeTabId && editor) {
+        editor.setValue('');
+        const tabData = tabs.find(t => t.id === activeTabId);
+        if (tabData) tabData.content = '';
+        localStorage.setItem('savedTabs', JSON.stringify(tabs));
+        showNotification('Text Cleared', 'success');
+      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+    }
+}
+function attachScript() {
+    fetch('/A', {
+        method: 'POST' // ← to MUSI być POST
+    })
+    .then(response => response.json())
+    .then(data => {
+        showNotification('Attached successfully!', 'success');
+            document.getElementById('context-menu').style.display = 'none'; // Hide context menu
 
-            fetch('/execute', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'script=' + encodeURIComponent(script)
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Execute response:', data);
-                showNotification('Script Executed Successfully', 'success');
-                document.getElementById('context-menu').style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error executing script:', error);
-                showNotification('Error Executing Script', 'error');
-                document.getElementById('context-menu').style.display = 'none';
-            });
-        }
-
-        function attachScript() {
-            if (!editor) {
-                showNotification('Editor not initialized', 'error');
-                return;
-            }
-            const script = editor.getValue().trim();
-
-            fetch('/attach', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'script=' + encodeURIComponent(script)
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Attach response:', data);
-                showNotification(' Attached Successfully', 'success');
-                document.getElementById('context-menu').style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error attaching :', error);
-                showNotification('Error Attaching', 'error');
-                document.getElementById('context-menu').style.display = 'none';
-            });
-        }
-
-        function clearText() {
-            if (activeTabId && editor) {
-                editor.setValue('');
-                const tabData = tabs.find(t => t.id === activeTabId);
-                if (tabData) tabData.content = '';
-                saveTabs();
-                showNotification('Text Cleared', 'success');
-                document.getElementById('context-menu').style.display = 'none';
-            }
-        }
+    })
+    .catch(error => {
+        showNotification('Failed to attach.', 'error');
+        console.error('Attach error:', error);
+      document.getElementById('context-menu').style.display = 'none'; // Hide context menu
+    });
+}
     </script>
 </body>
 </html>

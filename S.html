@@ -439,61 +439,130 @@ background-image: url('https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/h
         }
     }
 
-    require(['vs/editor/editor.main'], function() {
-        try {
-            monaco.languages.setMonarchTokensProvider('lua', {
-                tokenizer: {
-                    root: [
-                        [/\b(_G|_VERSION|Enum|game|plugin|shared|script|workspace|DebuggerManager|elapsedTime|LoadLibrary|PluginManager|settings|tick|time|typeof|UserSettings|HumanoidRootPart)\b/, 'roblox-global'],
-                        [/\b(and|break|do|else|elseif|end|false|for|function|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b/, 'keyword'],
-                        [/\bmath\.(abs|acos|asin|atan|atan2|ceil|cos|cosh|deg|exp|floor|fmod|frexp|huge|ldexp|log|max|min|modf|pi|pow|rad|random|randomseed|sin|sinh|sqrt|tan|tanh)\b/, 'math-function'],
-                        [/\btable\.(concat|foreach|foreachi|sort|insert|remove)\b/, 'table-function'],
-                        [/\b(Color3|Instance|BrickColor|Vector3|Vector2)\.new\b/, 'roblox-constructor'],
-                        [/\bdebug\.getinfo\b/, 'debug-function'],
-                        [/\bstring\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)\b/, 'string-function'],
-                        [/\bcoroutine\.(create|resume|running|status|wrap|yield)\b/, 'coroutine-function'],
-                        [/\b(Drawing|debug|Instance|Color3|Vector3|Vector2|BrickColor|math|table|string|coroutine|Humanoid|ClickDetector|LocalScript|Model|ModuleScript|Mouse|Part|Script|Tool|RunService|UserInputService|Workspace|ReplicatedFirst|SoundService|Character|CoreGui|ReplicatedStorage|Lighting|Players|PlayerGui|PlayerScript|LocalPlayer|Parent)\b/, 'roblox-class'],
-                        [/\b(print|warn|wid|info|printidentity|assert|collectgarbage|error|getfenv|getmetatable|setmetatable|ipairs|loadfile|loadstring|newproxy|next|pairs|pcall|spawn|rawequal|rawget|rawset|select|tonumber|tostring|type|unpack|xpcall|delay|stats)\b/, 'utility-function'],
-                        [/(?<=:)(Remove|BreakJoints|GetChildren|FindFirstChild|FireServer|InvokeServer|ClearAllChildren|Clone|Destroy|FindFirstAncestor|FindFirstAncestorOfClass|FindFirstAncestorWhichIsA|FindFirstChildOfClass|FindFirstChildWhichIsA|GetDebugId|GetDescendants|GetFullName|IsA|GetPropertyChangedSignal|IsAncestorOf|IsDescendantOf|WaitForChild|Connect|AncestryChanged|Changed|ChildAdded|ChildRemoved|DescendantAdded|DescendantRemoving|GetService|GetObjects|HttpGet|Wait)\b/, 'roblox-method'],
-                        [/\b(Visible|Color|Transparency|Thickness|From|To|Text|Size|Center|Outline|OutlineColor|Position|TextBounds|Font|Data|Rounding|NumSides|Radius|Filled|PointA|PointB|PointC|PointD)\b/, 'roblox-property'],
-                        [/"[^"]*"/, 'string'],
-                        [/'[^']*'/, 'string'],
-                        [/\d+/, 'number'],
-                        [/--.*$/, 'comment']
-                    ]
-                }
-            });
+require(['vs/editor/editor.main'], function() {
+    try {
+        monaco.languages.setMonarchTokensProvider('lua', {
+            defaultToken: '',
+            tokenPostfix: '.lua',
+            
+            keywords: [
+                'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'if',
+                'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while'
+            ],
 
-monaco.editor.defineTheme('custom-theme', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-        { token: 'keyword', foreground: 'c678dd' },
-        { token: 'string', foreground: '98c379' },
-        { token: 'number', foreground: 'd19a66' },
-        { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
-        { token: 'operator', foreground: '529875' },
-        { token: 'roblox-global', foreground: 'e06c75' },
-        { token: 'math-function', foreground: '61afef' },
-        { token: 'table-function', foreground: '61afef' },
-        { token: 'roblox-constructor', foreground: 'd19a66' },
-        { token: 'debug-function', foreground: 'e5c07b' },
-        { token: 'string-function', foreground: '61afef' },
-        { token: 'coroutine-function', foreground: '61afef' },
-        { token: 'roblox-class', foreground: 'e06c75' },
-        { token: 'utility-function', foreground: 'e5c07b' },
-        { token: 'roblox-method', foreground: 'c678dd' },
-        { token: 'roblox-property', foreground: '98c379' }
-    ],
-    colors: {
-        'editor.background': '#00000000', // Transparent background
-        'minimap.background': '#00000000', // Transparent minimap
-        'editor.foreground': '#ffffff',
-        'editor.lineHighlightBackground': '#00000000', // Optional: make line highlight transparent
-        'editor.lineNumbers': '#ffffff80', // Optional: adjust line numbers for better visibility
-        'editor.selectionBackground': '#3a3d41' // Optional: adjust selection color
-    }
-});
+            robloxGlobals: [
+                '_G', '_VERSION', 'Enum', 'game', 'plugin', 'shared', 'script', 'workspace',
+                'DebuggerManager', 'elapsedTime', 'LoadLibrary', 'PluginManager', 'settings',
+                'tick', 'time', 'typeof', 'UserSettings', 'HumanoidRootPart'
+            ],
+
+            robloxClasses: [
+                'Drawing', 'debug', 'Instance', 'Color3', 'Vector3', 'Vector2', 'BrickColor',
+                'math', 'table', 'string', 'coroutine', 'Humanoid', 'ClickDetector', 'LocalScript',
+                'Model', 'ModuleScript', 'Mouse', 'Part', 'Script', 'Tool', 'RunService',
+                'UserInputService', 'Workspace', 'ReplicatedFirst', 'SoundService', 'Character',
+                'CoreGui', 'ReplicatedStorage', 'Lighting', 'Players', 'PlayerGui', 'PlayerScript',
+                'LocalPlayer', 'Parent'
+            ],
+
+            utilityFunctions: [
+                'print', 'warn', 'wid', 'info', 'printidentity', 'assert', 'collectgarbage',
+                'error', 'getfenv', 'getmetatable', 'setmetatable', 'ipairs', 'loadfile',
+                'loadstring', 'newproxy', 'next', 'pairs', 'pcall', 'spawn', 'rawequal',
+                'rawget', 'rawset', 'select', 'tonumber', 'tostring', 'type', 'unpack', 'xpcall',
+                'delay', 'stats'
+            ],
+
+            tokenizer: {
+                root: [
+                    // Roblox globals
+                    [/\b(_G|_VERSION|Enum|game|plugin|shared|script|workspace|DebuggerManager|elapsedTime|LoadLibrary|PluginManager|settings|tick|time|typeof|UserSettings|HumanoidRootPart)\b/, 'roblox-global'],
+                    
+                    // Keywords
+                    [/\b(and|break|do|else|elseif|end|false|for|function|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b/, 'keyword'],
+                    
+                    // Math functions
+                    [/\bmath\.(abs|acos|asin|atan|atan2|ceil|cos|cosh|deg|exp|floor|fmod|frexp|huge|ldexp|log|max|min|modf|pi|pow|rad|random|randomseed|sin|sinh|sqrt|tan|tanh)\b/, 'math-function'],
+                    
+                    // Table functions
+                    [/\btable\.(concat|foreach|foreachi|sort|insert|remove)\b/, 'table-function'],
+                    
+                    // Constructors
+                    [/\b(Color3|Instance|BrickColor|Vector3|Vector2)\.new\b/, 'roblox-constructor'],
+                    
+                    // Debug functions
+                    [/\bdebug\.getinfo\b/, 'debug-function'],
+                    
+                    // String functions
+                    [/\bstring\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)\b/, 'string-function'],
+                    
+                    // Coroutine functions
+                    [/\bcoroutine\.(create|resume|running|status|wrap|yield)\b/, 'coroutine-function'],
+                    
+                    // Roblox classes
+                    [/\b(Drawing|debug|Instance|Color3|Vector3|Vector2|BrickColor|math|table|string|coroutine|Humanoid|ClickDetector|LocalScript|Model|ModuleScript|Mouse|Part|Script|Tool|RunService|UserInputService|Workspace|ReplicatedFirst|SoundService|Character|CoreGui|ReplicatedStorage|Lighting|Players|PlayerGui|PlayerScript|LocalPlayer|Parent)\b/, 'roblox-class'],
+                    
+                    // Utility functions
+                    [/\b(print|warn|wid|info|printidentity|assert|collectgarbage|error|getfenv|getmetatable|setmetatable|ipairs|loadfile|loadstring|newproxy|next|pairs|pcall|spawn|rawequal|rawget|rawset|select|tonumber|tostring|type|unpack|xpcall|delay|stats)\b/, 'utility-function'],
+                    
+                    // Methods
+                    [/(?<=:)(Remove|BreakJoints|GetChildren|FindFirstChild|FireServer|InvokeServer|ClearAllChildren|Clone|Destroy|FindFirstAncestor|FindFirstAncestorOfClass|FindFirstAncestorWhichIsA|FindFirstChildOfClass|FindFirstChildWhichIsA|GetDebugId|GetDescendants|GetFullName|IsA|GetPropertyChangedSignal|IsAncestorOf|IsDescendantOf|WaitForChild|Connect|AncestryChanged|Changed|ChildAdded|ChildRemoved|DescendantAdded|DescendantRemoving|GetService|GetObjects|HttpGet|Wait)\b/, 'roblox-method'],
+                    [/\b(HttpGet|HttpGet|HttpGetAsync|HttpPostAsync)\b/, 'http-function'],
+
+                    // Properties
+                    [/\b(Visible|Color|Transparency|Thickness|From|To|Text|Size|Center|Outline|OutlineColor|Position|TextBounds|Font|Data|Rounding|NumSides|Radius|Filled|PointA|PointB|PointC|PointD)\b/, 'roblox-property'],
+                    
+                    // Strings
+                    [/"[^"]*"/, 'string'],
+                    [/'[^']*'/, 'string'],
+                    
+                    // Numbers
+                    [/\d+/, 'number'],
+                    
+                    // Comments
+                    [/--.*$/, 'comment'],
+                    
+                    // Operators
+                    [/[+\-*/%^#=<>~!]/, 'operator'],
+                    [/[;:,.()\[\]{}]/, 'delimiter']
+                ]
+            }
+        });
+
+        monaco.editor.defineTheme('custom-theme', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'keyword', foreground: 'c678dd' },
+                { token: 'string', foreground: '98c379' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'operator', foreground: '529875' },
+                { token: 'delimiter', foreground: 'ffffff' },
+                { token: 'roblox-global', foreground: 'e06c75' },
+                { token: 'math-function', foreground: '61afef' },
+                { token: 'table-function', foreground: '61afef' },
+                { token: 'roblox-constructor', foreground: 'd19a66' },
+                { token: 'debug-function', foreground: 'e5c07b' },
+                { token: 'string-function', foreground: '61afef' },
+                { token: 'coroutine-function', foreground: '61afef' },
+                { token: 'roblox-class', foreground: 'e06c75' },
+                { token: 'utility-function', foreground: 'e5c07b' },
+                { token: 'roblox-method', foreground: 'c678dd' },
+              { token: 'http-function', foreground: '56b6c2' },  // cyan color
+                { token: 'roblox-property', foreground: '98c379' }
+              
+            ],
+            colors: {
+                'editor.background': '#00000000',
+                'minimap.background': '#00000000',
+                'editor.foreground': '#ffffff',
+                'editor.lineHighlightBackground': '#00000000',
+                'editor.lineNumbers': '#ffffff80',
+                'editor.selectionBackground': '#3a3d41',
+                'editorCursor.foreground': '#ffffff'
+            }
+        });
 
             editor = monaco.editor.create(document.getElementById('monaco-editor'), {
                 value: '',

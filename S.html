@@ -210,25 +210,52 @@
         }
 
         window.addEventListener('resize', resizeEditor);
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('fade-out');
-                    setTimeout(() => loadingScreen.style.display = 'none', 500);
-                }
-            }, 1000);
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+            setTimeout(() => loadingScreen.style.display = 'none', 500);
+        }
+    }, 1000);
 
-            const tabHeader = document.getElementById('tabHeader');
-            if (tabHeader) {
-                tabHeader.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    tabHeader.scrollLeft += e.deltaY > 0 ? 50 : -50;
-                });
-            }
-
-            resizeEditor();
+    const tabHeader = document.getElementById('tabHeader');
+    if (tabHeader) {
+        tabHeader.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            tabHeader.scrollLeft += e.deltaY > 0 ? 50 : -50;
         });
+        tabHeader.addEventListener('contextmenu', (e) => {
+            if (e.target.closest('.tab-header')) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Blokowanie prawego kliku na menu kontekstowym
+    const contextMenu = document.getElementById('context-menu');
+    if (contextMenu) {
+        contextMenu.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    }
+
+    // Blokowanie prawego i lewego kliku na notification
+    const notification = document.getElementById('notification');
+    if (notification) {
+        // Blokowanie prawego kliku
+        notification.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Zablokuj domyślne menu kontekstowe
+        });
+        // Blokowanie lewego kliku
+        notification.addEventListener('click', (e) => {
+            e.preventDefault(); // Zablokuj domyślną akcję lewego kliku
+            e.stopPropagation(); // Zapobiegaj propagacji zdarzenia do innych elementów
+        });
+    }
+
+    resizeEditor();
+});
 
         function createTab(name = '', content = '-- NOTHING X HUB') {
             try {
@@ -364,41 +391,46 @@
             }
         }
 
-        function showContextMenu(x, y, type) {
-            const contextMenu = document.getElementById('context-menu');
-            if (type === 'tab') {
-                contextMenu.innerHTML = `
-                    <div class="context-menu-item" onclick="deleteTabFromMenu()">Delete</div>
-                    <div class="context-menu-item" onclick="addTabFromMenu()">Add</div>
-                `;
-            } else if (type === 'editor') {
-                contextMenu.innerHTML = `
-                    ${isAttached ? '<div class="context-menu-item" onclick="executeScript()">Execute</div>' : ''}
-                    <div class="context-menu-item" onclick="clearText()">Clear</div>
-                    <div class="context-menu-item" onclick="attachScript()">Attach</div>
-                `;
-            }
+ function showContextMenu(x, y, type) {
+    const contextMenu = document.getElementById('context-menu');
+    if (type === 'tab') {
+        contextMenu.innerHTML = `
+            <div class="context-menu-item" onclick="deleteTabFromMenu()">Delete</div>
+            <div class="context-menu-item" onclick="addTabFromMenu()">Add</div>
+        `;
+    } else if (type === 'editor') {
+        contextMenu.innerHTML = `
+            ${isAttached ? '<div class="context-menu-item" onclick="executeScript()">Execute</div>' : ''}
+            <div class="context-menu-item" onclick="clearText()">Clear</div>
+            <div class="context-menu-item" onclick="attachScript()">Attach</div>
+        `;
+    }
 
-            contextMenu.style.display = 'block';
-            const menuWidth = contextMenu.offsetWidth;
-            const menuHeight = contextMenu.offsetHeight;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+    contextMenu.style.display = 'block';
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
 
-            let adjustedX = x;
-            let adjustedY = y;
+    let adjustedX = x;
+    let adjustedY = y;
 
-            if (x + menuWidth > viewportWidth - 10) {
-                adjustedX = viewportWidth - menuWidth - 10;
-            }
-            if (y + menuHeight > viewportHeight - 10) {
-                adjustedY = viewportHeight - menuHeight - 10;
-            }
+    if (x + menuWidth > viewportWidth - 10) {
+        adjustedX = viewportWidth - menuWidth - 10;
+    }
+    if (y + menuHeight > viewportHeight - 10) {
+        adjustedY = viewportHeight - menuHeight - 10;
+    }
 
-            contextMenu.style.left = `${adjustedX}px`;
-            contextMenu.style.top = `${adjustedY}px`;
-            setTimeout(() => contextMenu.classList.add('show'), 10);
-        }
+    contextMenu.style.left = `${adjustedX}px`;
+    contextMenu.style.top = `${adjustedY}px`;
+    setTimeout(() => contextMenu.classList.add('show'), 10);
+
+    // Blokowanie prawego kliku na menu kontekstowym
+    contextMenu.addEventListener('contextmenu', (e) => {
+        e.preventDefault(); // Zablokuj domyślne menu kontekstowe przeglądarki
+    });
+}
 
         function deleteTabFromMenu() {
             if (contextMenuTargetTabId) {

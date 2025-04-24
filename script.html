@@ -1,0 +1,688 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/S-S.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.fluenticon.com/icon.min.css">
+	    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      :root {
+        --url: url("https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/S%20-%20S%20back%20rund.png");
+        --primary-bg: #000000;
+        --secondary-bg: #1a1a1a;
+        --accent-color: #ffffff;
+        --accent-hover: #cccccc;
+        --text-color: #ffffff;
+        --text-secondary: #b3b3b3;
+        --card-bg: #1c1c1c;
+        --card-border: #2a2a2a;
+      }
+
+      /* Base Styles */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-color) var(--primary-bg);
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: var(--url);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        color: var(--text-color);
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        padding: 0.8rem;
+        overflow-y: auto;
+      }
+
+      /* Search Box */
+      .search-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 0.8rem;
+      }
+
+      .search-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .input-container {
+        position: relative;
+        flex: 1;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        z-index: 2;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 0.5rem 0.7rem 0.5rem 2rem;
+        border-radius: 5px;
+        background: var(--secondary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+      }
+
+      #searchInput:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+      }
+
+      .pagination {
+        display: flex;
+        gap: 0.3rem;
+      }
+
+      .pagination button {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        background: var(--secondary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+        cursor: pointer;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .pagination button:not(:disabled):hover {
+        background: var(--accent-color);
+        transform: translateY(-1px);
+      }
+
+      .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Script Cards */
+      .scripts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.7rem;
+        padding: 0.4rem 0;
+      }
+
+      .script-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 0.6rem;
+        border: 1px solid var(--card-border);
+        transition: all 0.2s ease;
+        position: relative;
+        transform: scale(1);
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .script-card:hover {
+        border-color: var(--accent-color);
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .script-card:active {
+        transform: scale(0.95);
+      }
+
+      .script-card img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+      }
+
+      .script-info h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .script-description {
+        color: var(--text-secondary);
+        font-size: 0.7rem;
+        margin: 0.3rem 0;
+        line-height: 1.4;
+      }
+
+      .script-uploaded {
+        color: var(--text-secondary);
+        font-size: 0.65rem;
+        margin: 0.3rem 0;
+      }
+
+      .script-badges {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        margin: 0.3rem 0;
+      }
+
+      .script-views {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2px);
+        padding: 0.15rem 0.4rem;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+      }
+
+      .script-views i {
+        font-size: 0.6rem;
+        color: var(--text-secondary);
+      }
+
+      .badge {
+        padding: 0.15rem 0.4rem;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        background: rgba(255, 255, 251, 0.1);
+        color: var(--text-color);
+      }
+
+      .button-container {
+        display: flex;
+        gap: 0.3rem;
+        width: 100%;
+      }
+
+      .execute-btn,
+      .copy-btn {
+        flex: 1;
+        padding: 0.5rem;
+        border-radius: 12px;
+        background: var(--accent-color);
+        color: var(--primary-bg);
+        border: none;
+        cursor: pointer;
+        font-size: 0.65rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        transition: all 0.2s ease;
+      }
+
+      .execute-btn:hover,
+      .copy-btn:hover {
+        background: var(--accent-hover);
+      }
+
+      .execute-btn:disabled,
+      .copy-btn:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+      }
+
+      /* Loading Animations */
+      .website-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+
+      .website-loader.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader-animation {
+        width: 40px;
+        height: 40px;
+        position: relative;
+      }
+
+      .loader-animation span {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: var(--accent-color);
+        animation: spin 0.8s linear infinite;
+      }
+
+      .loader-animation span:nth-child(2) {
+        border: 3px solid rgba(255, 255, 255, 0.05);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--primary-bg);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-hover);
+      }
+
+      /* Responsive Fallback */
+      @media (max-width: 400px) {
+        .scripts-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="website-loader">
+      <div class="dots-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="container">
+      <header>
+        <div class="search-container">
+          <div class="search-wrapper">
+            <div class="loader-container">
+              <div class="loader"></div>
+            </div>
+            <div class="input-container">
+              <i class="fas fa-search search-icon"></i>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Powered by scriptblox.com"
+              />
+            </div>
+            <div class="pagination">
+              <button id="prevBtn" disabled>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 17.898c0 1.074-1.265 1.648-2.073.941l-6.31-5.522a1.75 1.75 0 0 1 0-2.634l6.31-5.522c.808-.707 2.073-.133 2.073.941v11.796Z"
+                    fill="#ffffff"
+                  />
+                </svg>
+              </button>
+              <button id="nextBtn" disabled>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 17.898c0 1.074 1.265 1.648 2.073.941l6.31-5.522a1.75 1.75 0 0 0 0-2.634l-6.31-5.522C10.265 4.454 9 5.028 9 6.102v11.796Z"
+                    fill="#ffffff"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="scripts-container" id="scriptsContainer">
+        <!-- Scripts will be dynamically added here -->
+      </div>
+    </div>
+
+    <script>
+      let currentPage = 1;
+      const scriptsPerPage = 12;
+      let currentScripts = [];
+
+      const searchInput = document.getElementById("searchInput");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const scriptsContainer = document.getElementById("scriptsContainer");
+
+      // Block right-click (context menu) on the entire page
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
+
+      // Function to calculate "time ago"
+      function timeAgo(dateString) {
+        const now = new Date();
+        const uploadDate = new Date(dateString);
+        const seconds = Math.floor((now - uploadDate) / 1000);
+
+        let interval = seconds / 31536000; // Years
+        if (interval > 1) return Math.floor(interval) + " years ago";
+
+        interval = seconds / 2592000; // Months
+        if (interval > 1) return Math.floor(interval) + " months ago";
+
+        interval = seconds / 86400; // Days
+        if (interval > 1) return Math.floor(interval) + " days ago";
+
+        interval = seconds / 3600; // Hours
+        if (interval > 1) return Math.floor(interval) + " hours ago";
+
+        interval = seconds / 60; // Minutes
+        if (interval > 1) return Math.floor(interval) + " minutes ago";
+
+        return Math.floor(seconds) + " seconds ago";
+      }
+
+      async function searchScripts(query) {
+        const loaderContainer = document.querySelector(".loader-container");
+        scriptsContainer.innerHTML = "";
+
+        if (loaderContainer) {
+          loaderContainer.style.display = "flex";
+          requestAnimationFrame(() => loaderContainer.classList.add("active"));
+        }
+
+        try {
+          const apiUrl = `https://scriptblox.com/api/script/search?q=${encodeURIComponent(
+            query
+          )}&max=100&mode=free`;
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
+            apiUrl
+          )}`;
+          const response = await fetch(proxyUrl);
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              `Network response was not ok: ${response.statusText} (${response.status}). Response text: ${errorText}`
+            );
+          }
+
+          const proxyData = await response.json();
+          if (!proxyData.contents) {
+            throw new Error("No contents in proxy response");
+          }
+
+          const data = JSON.parse(proxyData.contents);
+          console.log("API Response:", data);
+
+          if (!data?.result?.scripts || !Array.isArray(data.result.scripts)) {
+            console.warn("Invalid script data:", data);
+            return [];
+          }
+
+          currentScripts = data.result.scripts;
+          displayScripts();
+          updatePaginationButtons();
+          return currentScripts;
+        } catch (error) {
+          console.error("Error fetching scripts:", error);
+          alert("Error fetching scripts. Please try again.");
+        } finally {
+          if (loaderContainer) {
+            loaderContainer.classList.remove("active");
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            loaderContainer.style.display = "none";
+          }
+        }
+      }
+
+      function displayScripts() {
+        scriptsContainer.innerHTML = "";
+
+        const startIndex = (currentPage - 1) * scriptsPerPage;
+        const endIndex = startIndex + scriptsPerPage;
+        const scriptsToShow = currentScripts.slice(startIndex, endIndex);
+
+        scriptsToShow.forEach((script, index) => {
+          // Determine the image to use
+          let imageUrl;
+
+          // Log the script properties for debugging
+          console.log(`Script: ${script.title}`);
+          console.log("script.image:", script.image);
+          console.log("script.game.imageUrl:", script.game?.imageUrl);
+
+          // Check for script.image
+          if (script.image) {
+            imageUrl = script.image.startsWith("http")
+              ? script.image
+              : `https://scriptblox.com${script.image}`;
+            console.log("Using script.image:", imageUrl);
+          } else if (script.game && script.game.imageUrl) {
+            imageUrl = script.game.imageUrl.includes("rbxcdn")
+              ? script.game.imageUrl
+              : `https://scriptblox.com${script.game.imageUrl}`;
+            console.log("Using game.imageUrl:", imageUrl);
+          } else {
+            imageUrl = "https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/Webp.png";
+            console.log("Using default fallback:", imageUrl);
+          }
+
+          const scriptCard = document.createElement("div");
+          scriptCard.className = "script-card";
+          scriptCard.style.animationDelay = `${index * 0.1}s`;
+
+          // Script badges based on properties
+          const isFree = script.mode === "free" || script.price === 0 || !script.price;
+          const hasKey = script.key || false;
+
+          console.log("isFree:", isFree);
+          console.log("hasKey:", hasKey);
+
+          const badges = `
+            <span class="badge">${isFree ? "Free" : "Paid"}</span>
+            ${hasKey ? '<span class="badge">Key System</span>' : ''}
+          `;
+
+          // Calculate uploaded time
+          const uploadedAgo = script.createdAt ? timeAgo(script.createdAt) : "Unknown";
+
+          scriptCard.innerHTML = `
+            <div class="script-views">
+                <i class="fas fa-eye"></i>
+                <span>${script.views || "0"}</span>
+            </div>
+            <img src="${imageUrl}" alt="${
+            script.title || "Untitled Script"
+          }" onerror="this.src='https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/Webp.png'">
+            <div class="script-info">
+                <h3>${script.title || "Untitled Script"}</h3>
+                <div class="script-badges">
+                    ${badges}
+                </div>
+                <div class="script-uploaded">${uploadedAgo}</div>
+            </div>
+            <div class="script-description">${script.game && script.game.name ? script.game.name : "Unknown Game"}</div>
+            <div class="button-container">
+                <button class="execute-btn">
+                    <i class="fas fa-play"></i>
+                    <span>Execute Script</span>
+                </button>
+                <button class="copy-btn">
+                    <i class="fas fa-copy"></i>
+                    <span>Copy Script</span>
+                </button>
+            </div>
+        `;
+
+          const executeBtn = scriptCard.querySelector(".execute-btn");
+          executeBtn.addEventListener("click", async () => {
+            try {
+              const response = await fetch('/E', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                  script: script.script || ""
+                }).toString()
+              });
+
+              if (response.ok) {
+                executeBtn.innerHTML =
+                  '<i class="fas fa-check"></i><span>Executed!</span>';
+                executeBtn.style.background = "#22c55ee6";
+
+                setTimeout(() => {
+                  executeBtn.innerHTML =
+                    '<i class="fas fa-play"></i><span>Execute Script</span>';
+                  executeBtn.style.background = "";
+                }, 2000);
+              } else {
+                throw new Error('Failed to execute script');
+              }
+            } catch (err) {
+              executeBtn.style.background = "#ef4444";
+              setTimeout(() => {
+                executeBtn.style.background = "";
+              }, 2000);
+            }
+          });
+
+          const copyBtn = scriptCard.querySelector(".copy-btn");
+          copyBtn.addEventListener("click", () => {
+            navigator.clipboard
+              .writeText(script.script || "")
+              .then(() => {
+                copyBtn.innerHTML =
+                  '<i class="fas fa-check"></i><span>Copied!</span>';
+                copyBtn.style.background = "#22c55ee6";
+
+                setTimeout(() => {
+                  copyBtn.innerHTML =
+                    '<i class="fas fa-copy"></i><span>Copy Script</span>';
+                  copyBtn.style.background = "";
+                }, 2000);
+              })
+              .catch((err) => {
+                copyBtn.style.background = "#ef4444";
+                setTimeout(() => {
+                  copyBtn.style.background = "";
+                }, 2000);
+              });
+          });
+
+          scriptsContainer.appendChild(scriptCard);
+        });
+      }
+
+      function updatePaginationButtons() {
+        const maxPages = Math.ceil(currentScripts.length / scriptsPerPage);
+        prevBtn.disabled = currentPage === 1;
+        if (maxPages === 0) {
+          nextBtn.disabled = true;
+        } else {
+          nextBtn.disabled = currentPage === maxPages;
+        }
+      }
+
+      // Event Listeners
+      searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          currentPage = 1;
+          searchScripts(searchInput.value);
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayScripts();
+          updatePaginationButtons();
+        }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        const maxPages = Math.ceil(currentScripts.length / scriptsPerPage);
+        if (currentPage < maxPages) {
+          currentPage++;
+          displayScripts();
+          updatePaginationButtons();
+        }
+      });
+
+      // Website loader
+      window.addEventListener("load", () => {
+        const loader = document.querySelector(".website-loader");
+
+        setTimeout(() => {
+          loader.classList.add("hide");
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 500);
+        }, 1500);
+      });
+    </script>
+  </body>
+</html>

@@ -1093,50 +1093,57 @@
 
             return Math.floor(seconds) + " seconds ago";
         }
+let isSearching = false;
+async function searchScripts(query) {
+    const loaderContainer = document.querySelector(".loader-container");
+    scriptsContainer.innerHTML = "";
+    isSearching = true; // Set flag to true when search starts
 
-        async function searchScripts(query) {
-            const loaderContainer = document.querySelector(".loader-container");
-            scriptsContainer.innerHTML = "";
+    // Disable pagination buttons
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
 
-            if (loaderContainer) {
-                loaderContainer.style.display = "flex";
-                requestAnimationFrame(() => loaderContainer.classList.add("active"));
-            }
+    if (loaderContainer) {
+        loaderContainer.style.display = "flex";
+        requestAnimationFrame(() => loaderContainer.classList.add("active"));
+    }
 
-            try {
-                const apiUrl = `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100&mode=free`;
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
-                const response = await fetch(proxyUrl);
+    try {
+        const apiUrl = `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100&mode=free`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+        const response = await fetch(proxyUrl);
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Network response was not ok: ${response.statusText} (${response.status}). Response text: ${errorText}`);
-                }
-
-                const proxyData = await response.json();
-                if (!proxyData.contents) {
-                    throw new Error("No contents in proxy response");
-                }
-
-                const data = JSON.parse(proxyData.contents);
-
-                if (!data?.result?.scripts || !Array.isArray(data.result.scripts)) {
-                    return [];
-                }
-
-                currentScripts = data.result.scripts;
-                displayScripts();
-                updatePaginationButtons();
-                return currentScripts;
-            } catch (error) {
-            } finally {
-                if (loaderContainer) {
-                    loaderContainer.classList.remove("active");
-                    await new Promise((resolve) => setTimeout(resolve, 300));
-                    loaderContainer.style.display = "none";
-                }
-            }
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Network response was not ok: ${response.statusText} (${response.status}). Response text: ${errorText}`);
         }
+
+        const proxyData = await response.json();
+        if (!proxyData.contents) {
+            throw new Error("No contents in proxy response");
+        }
+
+        const data = JSON.parse(proxyData.contents);
+
+        if (!data?.result?.scripts || !Array.isArray(data.result.scripts)) {
+            return [];
+        }
+
+        currentScripts = data.result.scripts;
+        displayScripts();
+        updatePaginationButtons();
+        return currentScripts;
+    } catch (error) {
+    } finally {
+        if (loaderContainer) {
+            loaderContainer.classList.remove("active");
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            loaderContainer.style.display = "none";
+        }
+        isSearching = false; // Reset flag when search completes
+        updatePaginationButtons(); // Re-enable buttons based on pagination state
+    }
+}
 
         function displayScripts() {
             scriptsContainer.innerHTML = "";
@@ -1266,22 +1273,28 @@
             }
         });
 
-        prevBtn.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                displayScripts();
-                updatePaginationButtons();
-            }
-        });
+prevBtn.addEventListener("click", () => {
+    if (isSearching) {
+        return; // Prevent interaction while searching
+    }
+    if (currentPage > 1) {
+        currentPage--;
+        displayScripts();
+        updatePaginationButtons();
+    }
+});
 
-        nextBtn.addEventListener("click", () => {
-            const maxPages = Math.ceil(currentScripts.length / scriptsPerPage);
-            if (currentPage < maxPages) {
-                currentPage++;
-                displayScripts();
-                updatePaginationButtons();
-            }
-        });
+nextBtn.addEventListener("click", () => {
+    if (isSearching) {
+        return; // Prevent interaction while searching
+    }
+    const maxPages = Math.ceil(currentScripts.length / scriptsPerPage);
+    if (currentPage < maxPages) {
+        currentPage++;
+        displayScripts();
+        updatePaginationButtons();
+    }
+});
 
         window.addEventListener("load", () => {
             const loader = document.querySelector(".website-loader");

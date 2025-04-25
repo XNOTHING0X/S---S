@@ -1,4 +1,5 @@
 
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -185,7 +186,65 @@
             min-height: 0;
             background-color: transparent !important;
         }
+/* Replace existing ::-webkit-scrollbar rules */
+::-webkit-scrollbar {
+    width: 20px; /* 2cm ≈ 20px for vertical scrollbar */
+    height: 20px; /* 2cm ≈ 20px for horizontal scrollbar */
+}
 
+::-webkit-scrollbar-track {
+    background: var(--primary-bg); /* Match background */
+    margin: 6px; /* Margin for both directions to avoid overlap */
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color); /* Visible thumb */
+    border-radius: 10px; /* Smooth rounded edges */
+    border: 4px solid var(--primary-bg); /* Buffer for clarity */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover); /* Lighter on hover */
+    cursor: grab;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #999999; /* Feedback when clicked */
+    cursor: grabbing;
+}
+
+/* Specific Monaco editor scrollbar */
+#monaco-editor ::-webkit-scrollbar {
+    width: 20px;
+    height: 20px;
+}
+
+#monaco-editor ::-webkit-scrollbar-track {
+    background: transparent; /* Match editor's transparent background */
+    margin: 6px;
+}
+
+#monaco-editor ::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+    border: 4px solid transparent; /* Prevent content overlap */
+}
+
+#monaco-editor ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+    cursor: grab;
+}
+
+#monaco-editor ::-webkit-scrollbar-thumb:active {
+    background: #999999;
+    cursor: grabbing;
+}
+
+/* Remove transitions for performance */
+::-webkit-scrollbar-thumb,
+#monaco-editor ::-webkit-scrollbar-thumb {
+    transition: none; /* Prevent lag during scrolling */
+}
         #context-menu {
             position: absolute;
             background-color: rgba(45, 45, 45, 0.5);

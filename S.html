@@ -22,14 +22,7 @@
             --card-border: #2a2a2a;
         }
 
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-color) var(--primary-bg);
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
-        }
+
 
         html, body {
             margin: 0;
@@ -181,70 +174,64 @@
             position: relative;
         }
 
-        #monaco-editor {
-            flex-grow: 1;
-            min-height: 0;
-            background-color: transparent !important;
-        }
-/* Replace existing ::-webkit-scrollbar rules */
-::-webkit-scrollbar {
-    width: 20px; /* 2cm ≈ 20px for vertical scrollbar */
-    height: 20px; /* 2cm ≈ 20px for horizontal scrollbar */
-}
-
-::-webkit-scrollbar-track {
-    background: var(--primary-bg); /* Match background */
-    margin: 6px; /* Margin for both directions to avoid overlap */
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--accent-color); /* Visible thumb */
-    border-radius: 10px; /* Smooth rounded edges */
-    border: 4px solid var(--primary-bg); /* Buffer for clarity */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-hover); /* Lighter on hover */
-    cursor: grab;
-}
-
-::-webkit-scrollbar-thumb:active {
-    background: #999999; /* Feedback when clicked */
-    cursor: grabbing;
-}
-
 /* Specific Monaco editor scrollbar */
-#monaco-editor ::-webkit-scrollbar {
-    width: 20px;
-    height: 20px;
+#monaco-editor {
+    position: relative;
+    overflow: scroll; /* Force scrollbars to always be visible */
+    width: 100%; /* Fill container width */
+    height: 100%; /* Fill container height */
+    scroll-behavior: smooth; /* Smooth scrolling for better experience */
 }
 
-#monaco-editor ::-webkit-scrollbar-track {
+#monaco-editor::-webkit-scrollbar {
+    width: 50px; /* Fixed width of 50px for vertical scrollbar */
+    height: 50px; /* Fixed height of 50px for horizontal scrollbar */
     background: transparent; /* Match editor's transparent background */
-    margin: 6px;
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb {
-    background: var(--accent-color);
-    border-radius: 10px;
-    border: 4px solid transparent; /* Prevent content overlap */
+#monaco-editor::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+    margin: 0; /* No margin to span full height/width */
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-hover);
+#monaco-editor::-webkit-scrollbar-thumb {
+    background: var(--accent-color); /* White thumb */
+    border-radius: 16px; /* Increased for pronounced curved effect with larger size */
+    border: 8px solid transparent; /* Larger buffer for 50px width to prevent overlap */
+    background-clip: padding-box; /* Ensure border doesn't affect thumb */
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); /* Inset shadow for wrapped look */
+}
+
+#monaco-editor::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover); /* Lighter on hover */
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Enhanced shadow on hover */
     cursor: grab;
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb:active {
-    background: #999999;
+#monaco-editor::-webkit-scrollbar-thumb:active {
+    background: #999999; /* Feedback when clicked */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8); /* Deeper shadow when active */
     cursor: grabbing;
 }
 
-/* Remove transitions for performance */
-::-webkit-scrollbar-thumb,
-#monaco-editor ::-webkit-scrollbar-thumb {
-    transition: none; /* Prevent lag during scrolling */
+/* Ensure scrollbar is always at the right edge */
+#monaco-editor::-webkit-scrollbar:vertical {
+    position: absolute;
+    right: 0; /* Force to right edge */
 }
+
+/* Ensure horizontal scrollbar stays at the bottom */
+#monaco-editor::-webkit-scrollbar:horizontal {
+    position: absolute;
+    bottom: 0; /* Force to bottom */
+}
+
+/* Firefox scrollbar support */
+#monaco-editor {
+    scrollbar-width: thin; /* Use thin to approximate 50px in Firefox */
+    scrollbar-color: var(--accent-color) transparent;
+}
+
         #context-menu {
             position: absolute;
             background-color: rgba(45, 45, 45, 0.5);
@@ -540,28 +527,7 @@
             }
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
 
-        ::-webkit-scrollbar-track {
-            background: var(--primary-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-hover);
-        }
-
-        @media (max-width: 400px) {
-            .scripts-container {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>

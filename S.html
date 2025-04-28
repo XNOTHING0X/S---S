@@ -168,37 +168,21 @@
             background-color: #17a2b8;
         }
 
-        #editor-container {
-            height: calc(100vh - 38px);
-            background-color: transparent !important;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        #monaco-editor {
-            flex-grow: 1;
-            min-height: 0;
-            background-color: transparent !important;
-        }
-/* Replace existing ::-webkit-scrollbar rules */
+/* General Scrollbar Styles */
 ::-webkit-scrollbar {
-    width: 20px; /* 2cm ≈ 20px for vertical scrollbar */
-    height: 20px; /* 2cm ≈ 20px for horizontal scrollbar */
+    width: 12px; /* Reduced from 20px for better aesthetics */
+    height: 12px; /* Consistent for horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--primary-bg); /* Match background */
-    margin: 6px; /* Margin for both directions to avoid overlap */
+    background: var(--primary-bg); /* Matches editor background */
+    margin: 4px; /* Prevents overlap with content */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--accent-color); /* Visible thumb */
-    border-radius: 10px; /* Smooth rounded edges */
-    border: 4px solid var(--primary-bg); /* Buffer for clarity */
+    background: var(--accent-color); /* White thumb for visibility */
+    border-radius: 6px; /* Smooth edges */
+    border: 3px solid var(--primary-bg); /* Buffer for clarity */
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -211,37 +195,148 @@
     cursor: grabbing;
 }
 
-/* Specific Monaco editor scrollbar */
-#monaco-editor ::-webkit-scrollbar {
-    width: 20px;
-    height: 20px;
+/* Monaco Editor Specific Scrollbar */
+#monaco-editor::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
 }
 
-#monaco-editor ::-webkit-scrollbar-track {
-    background: transparent; /* Match editor's transparent background */
-    margin: 6px;
+#monaco-editor::-webkit-scrollbar-track {
+    background: transparent; /* Matches editor's transparent background */
+    margin: 4px;
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb {
+#monaco-editor::-webkit-scrollbar-thumb {
     background: var(--accent-color);
-    border-radius: 10px;
-    border: 4px solid transparent; /* Prevent content overlap */
+    border-radius: 6px;
+    border: 3px solid transparent; /* Prevents content overlap */
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb:hover {
+#monaco-editor::-webkit-scrollbar-thumb:hover {
     background: var(--accent-hover);
     cursor: grab;
 }
 
-#monaco-editor ::-webkit-scrollbar-thumb:active {
+#monaco-editor::-webkit-scrollbar-thumb:active {
     background: #999999;
     cursor: grabbing;
 }
 
-/* Remove transitions for performance */
+/* Ensure no transitions for performance */
 ::-webkit-scrollbar-thumb,
-#monaco-editor ::-webkit-scrollbar-thumb {
-    transition: none; /* Prevent lag during scrolling */
+#monaco-editor::-webkit-scrollbar-thumb {
+    transition: none;
+}
+
+/* Updated Editor Container Styles */
+#editor-container {
+    height: calc(100vh - 38px); /* Matches existing height */
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: auto; /* Enable scrollbars when content overflows */
+}
+
+#monaco-editor {
+    flex-grow: 1;
+    min-height: 0;
+    background-color: transparent;
+    overflow: auto; /* Ensure editor itself can scroll */
+    width: 100%; /* Full width of container */
+    height: 100%; /* Full height of container */
+}::-webkit-scrollbar {
+    width: 12px; /* Vertical scrollbar width */
+    height: 12px; /* Horizontal scrollbar height */
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-bg); /* Matches page background */
+    margin: 4px; /* Prevents overlap with content */
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color); /* White thumb for visibility */
+    border-radius: 6px; /* Smooth edges */
+    border: 3px solid var(--primary-bg); /* Buffer for clarity */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover); /* Lighter on hover */
+    cursor: grab;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #999999; /* Feedback when clicked */
+    cursor: grabbing;
+}
+
+/* Monaco Editor Specific Scrollbar */
+#monaco-editor::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+#monaco-editor::-webkit-scrollbar-track {
+    background: transparent; /* Matches editor’s transparent background */
+    margin: 4px;
+}
+
+#monaco-editor::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 6px;
+    border: 3px solid transparent; /* Prevents content overlap */
+}
+
+#monaco-editor::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+    cursor: grab;
+}
+
+#monaco-editor::-webkit-scrollbar-thumb:active {
+    background: #999999;
+    cursor: grabbing;
+}
+
+/* Ensure no transitions for performance */
+::-webkit-scrollbar-thumb,
+#monaco-editor::-webkit-scrollbar-thumb {
+    transition: none;
+}
+
+/* Updated Editor Container Styles */
+#editor-container {
+    height: calc(100vh - 38px); /* Accounts for tab header */
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden; /* Prevent container scrollbars */
+    width: 100%; /* Full width of parent */
+}
+
+#monaco-editor {
+    flex-grow: 1;
+    min-height: 0;
+    background-color: transparent;
+    overflow-x: auto; /* Horizontal scrollbar for width */
+    overflow-y: auto; /* Vertical scrollbar for height */
+    width: 100%; /* Full width of container */
+    height: 100%; /* Full height of container */
+    position: relative;
+    scrollbar-gutter: stable; /* Reserves space for scrollbars to pin them */
+}
+
+/* Ensure horizontal scrollbar is pinned to bottom */
+#monaco-editor::-webkit-scrollbar:horizontal {
+    position: sticky;
+    bottom: 0;
+}
+
+/* Ensure vertical scrollbar is pinned to right */
+#monaco-editor::-webkit-scrollbar:vertical {
+    position: sticky;
+    right: 0;
 }
         #context-menu {
             position: absolute;
@@ -538,22 +633,141 @@
             }
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
 
-        ::-webkit-scrollbar-track {
-            background: var(--primary-bg);
-        }
+      
+.monaco-scrollable-element>.scrollbar>.up-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTEgMTEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTkuNDgwNDYsOC45NjE1bDEuMjYsLTEuMjZsLTUuMDQsLTUuMDRsLTUuNDYsNS4wNGwxLjI2LDEuMjZsNC4yLC0zLjc4bDMuNzgsMy43OHoiIGZpbGw9IiM0MjQyNDIiLz48L3N2Zz4=");
+    cursor: pointer
+}
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 3px;
-        }
+.monaco-scrollable-element>.scrollbar>.down-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoLTE4MCA1LjQ5MDQ1OTkxODk3NTgzLDUuODExNTAwMDcyNDc5MjQ4KSIgZmlsbD0iIzQyNDI0MiIgZD0ibTkuNDgwNDYsOC45NjE1bDEuMjYsLTEuMjZsLTUuMDQsLTUuMDRsLTUuNDYsNS4wNGwxLjI2LDEuMjZsNC4yLC0zLjc4bDMuNzgsMy43OHoiLz48L3N2Zz4=");
+    cursor: pointer
+}
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-hover);
-        }
+.monaco-scrollable-element>.scrollbar>.left-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDUuNDkwNDU5OTE4OTc1ODMxLDUuNDMxMzgyMTc5MjYwMjU0KSIgZmlsbD0iIzQyNDI0MiIgZD0ibTkuNDgwNDYsOC41ODEzOGwxLjI2LC0xLjI2bC01LjA0LC01LjA0bC01LjQ2LDUuMDRsMS4yNiwxLjI2bDQuMiwtMy43OGwzLjc4LDMuNzh6Ii8+PC9zdmc+");
+    cursor: pointer
+}
+
+.monaco-scrollable-element>.scrollbar>.right-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTEgMTEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS42MTcxNjUwODg2NTM1NjQ1LDUuNTU4MDg5NzMzMTIzNzgpICIgZmlsbD0iIzQyNDI0MiIgZD0ibTkuNjA3MTcsOC43MDgwOWwxLjI2LC0xLjI2bC01LjA0LC01LjA0bC01LjQ2LDUuMDRsMS4yNiwxLjI2bDQuMiwtMy43OGwzLjc4LDMuNzh6Ii8+PC9zdmc+");
+    cursor: pointer
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.up-arrow,.vs-dark .monaco-scrollable-element>.scrollbar>.up-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTEgMTEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTkuNDgwNDYsOC45NjE1bDEuMjYsLTEuMjZsLTUuMDQsLTUuMDRsLTUuNDYsNS4wNGwxLjI2LDEuMjZsNC4yLC0zLjc4bDMuNzgsMy43OHoiIGZpbGw9IiNFOEU4RTgiLz48L3N2Zz4=")
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.down-arrow,.vs-dark .monaco-scrollable-element>.scrollbar>.down-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoLTE4MCA1LjQ5MDQ1OTkxODk3NTgzLDUuODExNTAwMDcyNDc5MjQ4KSIgZmlsbD0iI0U4RThFOCIgZD0ibTkuNDgwNDYsOC45NjE1bDEuMjYsLTEuMjZsLTUuMDQsLTUuMDRsLTUuNDYsNS4wNGwxLjI2LDEuMjZsNC4yLC0zLjc4bDMuNzgsMy43OHoiLz48L3N2Zz4=")
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.left-arrow,.vs-dark .monaco-scrollable-element>.scrollbar>.left-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDUuNDkwNDU5OTE4OTc1ODMxLDUuNDMxMzgyMTc5MjYwMjU0KSIgZmlsbD0iI0U4RThFOCIgZD0ibTkuNDgwNDYsOC41ODEzOGwxLjI2LC0xLjI2bC01LjA0LC01LjA0bC01LjQ2LDUuMDRsMS4yNiwxLjI2bDQuMiwtMy43OGwzLjc4LDMuNzh6Ii8+PC9zdmc+")
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.right-arrow,.vs-dark .monaco-scrollable-element>.scrollbar>.right-arrow {
+    background: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTEgMTEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS42MTcxNjUwODg2NTM1NjQ1LDUuNTU4MDg5NzMzMTIzNzgpICIgZmlsbD0iI0U4RThFOCIgZD0ibTkuNjA3MTcsOC43MDgwOWwxLjI2LC0xLjI2bC01LjA0LC01LjA0bC01LjQ2LDUuMDRsMS4yNiwxLjI2bDQuMiwtMy43OGwzLjc4LDMuNzh6Ii8+PC9zdmc+")
+}
+
+.monaco-scrollable-element>.visible {
+    opacity: 1;
+    background: transparent;
+    transition: opacity .1s linear
+}
+
+.monaco-scrollable-element>.invisible {
+    opacity: 0;
+    pointer-events: none
+}
+
+.monaco-scrollable-element>.invisible.fade {
+    transition: opacity .8s linear
+}
+
+.monaco-scrollable-element>.shadow {
+    position: absolute;
+    display: none
+}
+
+.monaco-scrollable-element>.shadow.top {
+    display: block;
+    top: 0;
+    left: 3px;
+    height: 3px;
+    width: 100%;
+    box-shadow: inset 0 6px 6px -6px #ddd
+}
+
+.monaco-scrollable-element>.shadow.left {
+    display: block;
+    top: 3px;
+    left: 0;
+    height: 100%;
+    width: 3px;
+    box-shadow: inset 6px 0 6px -6px #ddd
+}
+
+.monaco-scrollable-element>.shadow.top-left-corner {
+    display: block;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 3px
+}
+
+.monaco-scrollable-element>.shadow.top.left {
+    box-shadow: inset 6px 6px 6px -6px #ddd
+}
+
+.vs .monaco-scrollable-element>.scrollbar>.slider {
+    background: hsla(0,0%,39%,.4)
+}
+
+.vs-dark .monaco-scrollable-element>.scrollbar>.slider {
+    background: hsla(0,0%,47%,.4)
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.slider {
+    background: rgba(111,195,223,.6)
+}
+
+.monaco-scrollable-element>.scrollbar>.slider:hover {
+    background: hsla(0,0%,39%,.7)
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.slider:hover {
+    background: rgba(111,195,223,.8)
+}
+
+.monaco-scrollable-element>.scrollbar>.slider.active {
+    background: rgba(0,0,0,.6)
+}
+
+.vs-dark .monaco-scrollable-element>.scrollbar>.slider.active {
+    background: hsla(0,0%,75%,.4)
+}
+
+.hc-black .monaco-scrollable-element>.scrollbar>.slider.active {
+    background: #6fc3df
+}
+
+.vs-dark .monaco-scrollable-element .shadow.top {
+    box-shadow: none
+}
+
+.vs-dark .monaco-scrollable-element .shadow.left {
+    box-shadow: inset 6px 0 6px -6px #000
+}
+
+.vs-dark .monaco-scrollable-element .shadow.top.left {
+    box-shadow: inset 6px 6px 6px -6px #000
+}
+
+.hc-black .monaco-scrollable-element .shadow.left,.hc-black .monaco-scrollable-element .shadow.top,.hc-black .monaco-scrollable-element .shadow.top.left {
+    box-shadow: none
+}
 
         @media (max-width: 400px) {
             .scripts-container {

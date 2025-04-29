@@ -344,14 +344,16 @@
 #searchInput {
     width: 100%;
     padding: 0.5rem 0.7rem 0.5rem 2rem;
-    border-radius: 5px;
+    border-radius: 50px;
     background: var(--secondary-bg);
     border: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-color);
     font-size: 0.8rem;
     transition: all 0.2s ease;
     -webkit-appearance: none; /* Remove default browser styling */
+    opacity: 0.8; /* Dodana przezroczystość */
 }
+
     #searchInput:focus {
         outline: none;
         border-color: var(--accent-color);
@@ -747,7 +749,7 @@
                         </div>
                         <div class="input-container">
                             <i class="fas fa-search search-icon"></i>
-                            <input type="text" id="searchInput" placeholder="Powered by scriptblox.com" />
+                            <input type="text" id="searchInput" placeholder="Powered by scriptblox " />
                         </div>
                         <div class="pagination">
                             <button id="prevBtn" disabled>

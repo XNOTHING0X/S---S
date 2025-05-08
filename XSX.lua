@@ -5,6 +5,6 @@ _G.XVX = true
 local player = game:GetService("Players").LocalPlayer
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "",
-    Text = "🟢",
-    Duration = 5,
+    Text = "",
+    Duration = 5.5,
 })

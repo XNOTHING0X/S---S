@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOTHING X HUB</title>
     <link rel="icon" href="https://raw.githubusercontent.com/XNOTHING0X/S---S/refs/heads/main/S-S.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 <style>
     :root {
@@ -61,12 +61,13 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: var(--primary-bg);
+        background: rgba(10, 10, 10, 0.9);
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9999;
         transition: opacity 0.8s ease;
+        backdrop-filter: blur(5px);
     }
 
     #loading-screen.fade-out {
@@ -74,22 +75,49 @@
     }
 
     #loading-screen h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 3rem;
+        font-weight: 600;
         color: var(--accent-color);
-        text-shadow: 0 0 10px var(--glow-color);
+        text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--accent-hover);
         animation: neonPulse 1.5s infinite alternate;
     }
 
     @keyframes neonPulse {
-        0% { text-shadow: 0 0 5px var(--glow-color); }
-        100% { text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--accent-color); }
+        0% { text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--accent-hover); }
+        100% { text-shadow: 0 0 30px var(--glow-color), 0 0 40px var(--accent-hover); }
+    }
+
+    .loader-animation {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .loader-animation span {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 5px solid transparent;
+        border-top-color: var(--accent-color);
+        animation: spin 1s linear infinite;
+    }
+
+    .loader-animation span:nth-child(2) {
+        border: 5px solid rgba(0, 255, 136, 0.3);
+        animation-delay: -0.5s;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     .tab-header {
         display: flex;
         align-items: center;
-        padding: 8px;
+        padding: 6px;
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(5px);
         border-bottom: 1px solid var(--accent-color);
@@ -105,95 +133,97 @@
     .tab {
         display: flex;
         align-items: center;
-        padding: 6px 12px;
-        margin: 0 4px;
+        padding: 5px 10px;
+        margin: 0 3px;
         cursor: pointer;
         background: var(--secondary-bg);
-        border-radius: 8px;
-        font-size: 13px;
+        border-radius: 6px;
+        font-size: 12px;
         color: var(--text-color);
-        transition: all 0.3s ease;
-        position: relative;
+        transition: all 0.2s ease;
     }
 
     .tab:hover {
         background: var(--accent-color);
         color: var(--primary-bg);
-        transform: translateY(-2px);
+        transform: translateY(-1px);
     }
 
     .tab.active {
         background: var(--accent-color);
         color: var(--primary-bg);
-        box-shadow: 0 0 15px var(--glow-color);
-        animation: glowPulse 2s infinite ease-in-out;
-    }
-
-    @keyframes glowPulse {
-        0%, 100% { box-shadow: 0 0 10px var(--glow-color); }
-        50% { box-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--accent-color); }
+        box-shadow: 0 0 10px var(--glow-color);
     }
 
     .tab span {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
     }
 
     .tab i {
-        font-size: 12px;
+        font-size: 11px;
     }
 
-    #notification {
+    .notification {
         position: fixed;
-        bottom: 20px;
         left: 20px;
         background: rgba(0, 0, 0, 0.9);
         color: var(--text-color);
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-size: 14px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 12px;
         opacity: 0;
-        transition: all 0.4s ease;
+        transition: opacity 0.3s ease, transform 0.3s ease;
         z-index: 10000;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        transform: translateY(20px);
-        display: none;
-        max-width: 300px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        max-width: 250px;
+        animation: moveUp 3s linear forwards;
     }
 
-    #notification.show {
+    .notification.show {
         opacity: 1;
-        transform: translateY(0);
-        display: block;
     }
 
-    #notification.success {
+    .notification.success {
         background: #28a745;
     }
 
-    #notification.error {
+    .notification.error {
         background: #dc3545;
     }
 
-    #notification.info {
+    .notification.info {
         background: #17a2b8;
     }
 
+    @keyframes moveUp {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+            bottom: 20px;
+        }
+        100% {
+            transform: translateY(-60px);
+            opacity: 0;
+            bottom: 20px;
+            display: none;
+        }
+    }
+
     ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
     }
 
     ::-webkit-scrollbar-track {
         background: var(--primary-bg);
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     ::-webkit-scrollbar-thumb {
         background: var(--accent-color);
-        border-radius: 10px;
-        transition: background 0.2s ease;
+        border-radius: 8px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -201,7 +231,7 @@
     }
 
     #editor-container {
-        height: calc(100vh - 40px);
+        height: calc(100vh - 36px);
         background: transparent;
         display: flex;
         flex-direction: column;
@@ -216,7 +246,6 @@
         background: transparent;
         width: 100%;
         height: 100%;
-        position: relative;
     }
 
     #context-menu {
@@ -261,7 +290,7 @@
     .container {
         width: 100%;
         height: 100%;
-        padding: 1rem;
+        padding: 0.8rem;
         overflow-y: auto;
         scrollbar-width: none;
     }
@@ -273,13 +302,13 @@
     .search-container {
         position: relative;
         width: 100%;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
     }
 
     .search-wrapper {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .input-container {
@@ -289,50 +318,50 @@
 
     .search-icon {
         position: absolute;
-        left: 12px;
+        left: 10px;
         top: 50%;
         transform: translateY(-50%);
         color: var(--accent-color);
-        font-size: 16px;
+        font-size: 14px;
         z-index: 2;
     }
 
     #searchInput {
         width: 100%;
-        padding: 12px 16px 12px 40px;
+        padding: 10px 14px 10px 36px;
         border-radius: 50px;
         background: var(--secondary-bg);
         border: 1px solid var(--accent-color);
         color: var(--text-color);
-        font-size: 14px;
-        transition: all 0.3s ease;
+        font-size: 13px;
+        transition: all 0.2s ease;
         opacity: 0.9;
     }
 
     #searchInput:focus {
         outline: none;
         border-color: var(--accent-hover);
-        box-shadow: 0 0 10px var(--glow-color);
+        box-shadow: 0 0 8px var(--glow-color);
     }
 
     .pagination button {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
         background: var(--secondary-bg);
         border: 1px solid var(--accent-color);
         color: var(--text-color);
         cursor: pointer;
-        font-size: 16px;
+        font-size: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
     }
 
     .pagination button:not(:disabled):hover {
         background: var(--accent-color);
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
 
     .pagination button:disabled {
@@ -342,30 +371,29 @@
 
     .scripts-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        padding: 0.5rem 0;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.8rem;
+        padding: 0.4rem 0;
     }
 
     .script-card {
         background: var(--card-bg);
-        border-radius: 16px;
-        padding: 0.8rem;
+        border-radius: 12px;
+        padding: 0.6rem;
         border: 1px solid var(--card-border);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         position: relative;
-        transform: scale(1);
-        min-height: 320px;
+        min-height: 280px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
     }
 
     .script-card:hover {
         border-color: var(--accent-color);
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px var(--glow-color);
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px var(--glow-color);
     }
 
     .script-card:active {
@@ -374,21 +402,21 @@
 
     .script-card img {
         width: 100%;
-        height: 140px;
+        height: 120px;
         object-fit: cover;
-        border-radius: 12px;
-        margin-bottom: 0.6rem;
-        transition: transform 0.3s ease;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        transition: transform 0.2s ease;
     }
 
     .script-card:hover img {
-        transform: scale(1.02);
+        transform: scale(1.01);
     }
 
     .script-info h3 {
-        font-size: 1rem;
-        margin-bottom: 0.4rem;
-        line-height: 1.4;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -398,83 +426,83 @@
 
     .script-description {
         color: var(--text-secondary);
-        font-size: 0.8rem;
-        margin: 0.4rem 0;
-        line-height: 1.5;
+        font-size: 0.7rem;
+        margin: 0.3rem 0;
+        line-height: 1.4;
     }
 
     .script-uploaded {
         color: var(--text-secondary);
-        font-size: 0.7rem;
-        margin: 0.4rem 0;
+        font-size: 0.65rem;
+        margin: 0.3rem 0;
     }
 
     .script-badges {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.3rem;
         flex-wrap: wrap;
-        margin: 0.4rem 0;
+        margin: 0.3rem 0;
     }
 
     .script-views {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(5px);
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 10px;
+        font-size: 0.65rem;
         display: flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.2rem;
     }
 
     .script-views i {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         color: var(--accent-color);
     }
 
     .badge {
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 10px;
+        font-size: 0.65rem;
         background: var(--accent-color);
         color: var(--primary-bg);
         display: inline-flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.2rem;
     }
 
     .button-container-script {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.4rem;
         width: 100%;
     }
 
     .execute-btn,
     .copy-btn {
         flex: 1;
-        padding: 0.6rem;
-        border-radius: 12px;
+        padding: 0.5rem;
+        border-radius: 10px;
         background: var(--accent-color);
         color: var(--primary-bg);
         border: none;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: 500;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.4rem;
-        transition: all 0.3s ease;
+        gap: 0.3rem;
+        transition: all 0.2s ease;
     }
 
     .execute-btn:hover,
     .copy-btn:hover {
         background: var(--accent-hover);
-        transform: scale(1.05);
-        box-shadow: 0 0 10px var(--glow-color);
+        transform: scale(1.03);
+        box-shadow: 0 0 8px var(--glow-color);
     }
 
     .execute-btn:disabled,
@@ -489,43 +517,18 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: var(--primary-bg);
+        background: rgba(10, 10, 10, 0.9);
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9999;
         transition: opacity 0.5s ease;
+        backdrop-filter: blur(5px);
     }
 
     .website-loader.hide {
         opacity: 0;
         pointer-events: none;
-    }
-
-    .loader-animation {
-        width: 50px;
-        height: 50px;
-        position: relative;
-    }
-
-    .loader-animation span {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        border: 4px solid transparent;
-        border-top-color: var(--accent-color);
-        animation: spin 0.8s linear infinite;
-    }
-
-    .loader-animation span:nth-child(2) {
-        border: 4px solid rgba(0, 255, 136, 0.2);
-        animation-delay: -0.4s;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
     }
 
     @media (max-width: 400px) {
@@ -539,17 +542,21 @@
     <div id="editor-mode" class="main-content active">
         <div id="loading-screen">
             <h1>NOTHING X HUB</h1>
+            <div class="loader-animation">
+                <span></span>
+                <span></span>
+            </div>
         </div>
         <div class="tab-header" id="tabHeader"></div>
         <div id="editor-container">
             <div id="monaco-editor"></div>
         </div>
-        <div id="notification"></div>
         <div id="context-menu" style="display: none;"></div>
     </div>
 
     <div id="scriptblox-mode" class="main-content">
         <div class="website-loader">
+            <h1>NOTHING X HUB</h1>
             <div class="loader-animation">
                 <span></span>
                 <span></span>
@@ -579,18 +586,79 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
     <script>
+        // Notification System
+        let notificationCount = 0;
+        let notificationOffset = 0;
+
+        function showNotification(message, type = 'info') {
+            if (notificationCount >= 2) {
+                return;
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.bottom = `${20 + notificationOffset}px`;
+            document.body.appendChild(notification);
+
+            notificationOffset += 60; // Odstęp 60px między powiadomieniami
+            notificationCount++;
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            notification.addEventListener('animationend', () => {
+                notification.remove();
+                notificationCount--;
+                notificationOffset -= 60;
+                const notifications = document.querySelectorAll('.notification');
+                notifications.forEach((notif, index) => {
+                    notif.style.bottom = `${20 + (index * 60)}px`;
+                });
+            });
+        }
+
         // Mode Switching
         const mainContents = document.querySelectorAll('.main-content');
         let currentMode = 'editor';
+        let isSwitching = false;
+
+        function showLoader(message) {
+            const loader = document.querySelector('.website-loader');
+            const loaderText = document.querySelector('.website-loader h1') || document.createElement('h1');
+            loaderText.textContent = message;
+            if (!loader.contains(loaderText)) loader.appendChild(loaderText);
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+        }
+
+        function hideLoader() {
+            const loader = document.querySelector('.website-loader');
+            loader.classList.add('hide');
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
 
         function switchMode(mode) {
-            mainContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === `${mode}-mode`) {
-                    content.classList.add('active');
-                }
-            });
-            currentMode = mode;
+            if (isSwitching || mode === currentMode) return;
+            isSwitching = true;
+
+            const message = mode === 'editor' ? 'Loading Editor...' : 'Loading Scriptblox...';
+            showLoader(message);
+
+            setTimeout(() => {
+                mainContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${mode}-mode`) {
+                        content.classList.add('active');
+                    }
+                });
+                currentMode = mode;
+                hideLoader();
+                isSwitching = false;
+                showNotification(`${mode.charAt(0).toUpperCase() + mode.slice(1)} mode loaded`, 'success');
+            }, 1000);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -616,7 +684,7 @@
         function resizeEditor() {
             const editorContainer = document.getElementById('editor-container');
             if (editorContainer && editor) {
-                editorContainer.style.height = `${window.innerHeight - 40}px`;
+                editorContainer.style.height = `${window.innerHeight - 36}px`;
                 editor.layout();
             }
         }
@@ -648,17 +716,6 @@
             if (contextMenu) {
                 contextMenu.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                });
-            }
-
-            const notification = document.getElementById('notification');
-            if (notification) {
-                notification.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                });
-                notification.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
                 });
             }
 
@@ -944,7 +1001,7 @@
                     theme: 'custom-theme',
                     minimap: { enabled: false },
                     automaticLayout: true,
-                    fontSize: 14,
+                    fontSize: 13,
                     contextmenu: false
                 });
 
@@ -1003,30 +1060,6 @@
             }
         });
 
-        let notificationTimeout = null;
-
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            if (!notification) return;
-
-            if (notificationTimeout) {
-                clearTimeout(notificationTimeout);
-            }
-            notification.classList.remove('success', 'error', 'info');
-            notification.classList.add(type);
-            notification.textContent = message;
-            notification.style.display = 'block';
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            notificationTimeout = setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 200);
-            }, 3000);
-        }
-
         function executeScript() {
             if (!isAttached) {
                 showNotification('Please attach first', 'error');
@@ -1042,11 +1075,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                showNotification('Script Executed Successfully', 'success');
+                showNotification('Script executed successfully', 'success');
                 document.getElementById('context-menu').style.display = 'none';
             })
             .catch(error => {
-                showNotification('Error Executing Script', 'error');
+                showNotification('Error executing script', 'error');
                 document.getElementById('context-menu').style.display = 'none';
             });
         }
@@ -1057,7 +1090,7 @@
                 const tabData = tabs.find(t => t.id === activeTabId);
                 if (tabData) tabData.content = '';
                 localStorage.setItem('savedTabs', JSON.stringify(tabs));
-                showNotification('Text Cleared', 'success');
+                showNotification('Text cleared', 'success');
                 document.getElementById('context-menu').style.display = 'none';
             }
         }
@@ -1069,12 +1102,12 @@
             .then(response => response.json())
             .then(data => {
                 isAttached = true;
-                showNotification('Attached successfully!', 'success');
+                showNotification('Attached successfully', 'success');
                 document.getElementById('context-menu').style.display = 'none';
             })
             .catch(error => {
                 isAttached = false;
-                showNotification('Failed to attach.', 'error');
+                showNotification('Failed to attach', 'error');
                 document.getElementById('context-menu').style.display = 'none';
             });
         }
@@ -1239,6 +1272,7 @@
                         });
 
                         if (response.ok) {
+                            showNotification('Script executed successfully', 'success');
                             executeBtn.innerHTML = '<i class="fas fa-check"></i><span>Executed!</span>';
                             executeBtn.style.background = "#28a745";
                             setTimeout(() => {
@@ -1249,6 +1283,7 @@
                             throw new Error('Failed to execute script');
                         }
                     } catch (err) {
+                        showNotification('Error executing script', 'error');
                         executeBtn.style.background = "#dc3545";
                         setTimeout(() => {
                             executeBtn.style.background = "";
@@ -1260,6 +1295,7 @@
                 copyBtn.addEventListener("click", () => {
                     navigator.clipboard.writeText(script.script || "")
                         .then(() => {
+                            showNotification('Script copied', 'success');
                             copyBtn.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
                             copyBtn.style.background = "#28a745";
                             setTimeout(() => {
@@ -1268,6 +1304,7 @@
                             }, 2000);
                         })
                         .catch((err) => {
+                            showNotification('Failed to copy script', 'error');
                             copyBtn.style.background = "#dc3545";
                             setTimeout(() => {
                                 copyBtn.style.background = "";
@@ -1316,7 +1353,7 @@
             setTimeout(() => {
                 loader.classList.add("hide");
                 setTimeout(() => {
-                    loader.style.display = "none";
+                    loader.style.display = 'none';
                 }, 500);
             }, 1500);
         });

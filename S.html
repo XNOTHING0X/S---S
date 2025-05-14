@@ -1188,7 +1188,7 @@
                 updatePaginationButtons();
                 return currentScripts;
             } catch (error) {
-                showNotification('Failed to load scripts', 'error');
+                showNotification('Failed  load scripts', 'error');
             } finally {
                 if (loaderContainer) {
                     loaderContainer.classList.remove("active");
@@ -1272,7 +1272,6 @@
                         });
 
                         if (response.ok) {
-                            showNotification('Script executed successfully', 'success');
                             executeBtn.innerHTML = '<i class="fas fa-check"></i><span>Executed!</span>';
                             executeBtn.style.background = "#28a745";
                             setTimeout(() => {
@@ -1283,7 +1282,6 @@
                             throw new Error('Failed to execute script');
                         }
                     } catch (err) {
-                        showNotification('Error executing script', 'error');
                         executeBtn.style.background = "#dc3545";
                         setTimeout(() => {
                             executeBtn.style.background = "";
@@ -1295,7 +1293,6 @@
                 copyBtn.addEventListener("click", () => {
                     navigator.clipboard.writeText(script.script || "")
                         .then(() => {
-                            showNotification('Script copied', 'success');
                             copyBtn.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
                             copyBtn.style.background = "#28a745";
                             setTimeout(() => {
@@ -1304,7 +1301,6 @@
                             }, 2000);
                         })
                         .catch((err) => {
-                            showNotification('Failed to copy script', 'error');
                             copyBtn.style.background = "#dc3545";
                             setTimeout(() => {
                                 copyBtn.style.background = "";

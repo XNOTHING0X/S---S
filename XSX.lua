@@ -1,5 +1,6 @@
-local player = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local hasSentFlag = ReplicatedStorage:FindFirstChild("HasSentNotification")
 if not hasSentFlag then
     hasSentFlag = Instance.new("BoolValue")
